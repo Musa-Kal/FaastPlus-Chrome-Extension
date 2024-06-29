@@ -1,0 +1,253 @@
+header {
+    text-align: center;
+}
+
+header h3 span{
+    color: #FFA63B;
+}
+
+body {
+    background-color: #202124;
+    color: white;
+}
+
+/* #packed-status td, th {
+    border-radius: 2px;
+    padding: 5px 10px;
+    border: 2px solid lightgray;
+}
+
+
+
+#packed-status td, th {
+    border-collapse: collapse;
+} */
+
+
+.splitter {
+    display: block;
+    width: 100%;
+    opacity: 60%;
+    border-bottom: 2px double white;
+    margin: 10px 0px;
+}
+
+#pickTask-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.control-button {
+    width: 45% !important; 
+    height: 40px;
+    display: flex;
+}
+
+.control-button img {
+    height: 100%;
+    margin: auto;
+}
+
+
+#editRecords-InputTable {
+    margin: 10px auto;
+    width: 100%;
+}
+
+
+#edit-record-number-input {
+    width: 90%;
+    font-weight: bolder;
+    font-size: x-large;
+}
+
+
+.styled-textInput {
+    background-color: lightgrey;
+    border: 2px solid grey;
+    border-radius: 10px;
+}
+
+.inputRow {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+
+#editTypeSelection {
+    background-color: white;
+    border-radius: 10px;
+    font-size: xx-large;
+    font-weight: bolder;
+    height: 40px;
+    width: 40px;
+}
+
+
+
+.multi-color {
+    color: rgb(245, 59, 59);
+}
+
+.single-color {
+    color: rgb(85, 85, 249);
+}
+
+
+.sioc-color {
+    color: rgb(74, 220, 74);
+}
+
+
+.add-flex {
+    display: flex;
+}
+
+
+.text-l {
+    font-size: large;
+}
+
+.space-around {
+    justify-content: space-around;
+}
+
+
+#lifetime-packed-display {
+    text-align: center;
+    margin: 10px auto;
+    border-radius: 10px;
+    border: 2px solid lightgray;
+}
+
+.editRecordsType-buttons {
+    width: 32% !important;
+    height: 30px;
+}
+
+
+.my-0 {
+    margin: 0 !important;
+  }
+  
+.my-1 {
+    margin: 10px 0 !important;
+  }
+
+.btn-danger {
+    background-color: red;
+    color: white;
+    border: 2px solid white;
+    border-radius: 10px;
+    font-weight: bolder;
+}
+
+#clearRecord-btn {
+    height: 30px;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.yeet-button {
+  appearance: button;
+  background-color: #bebebe;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  box-sizing: border-box;
+  /* color: #FFFFFF; */
+  cursor: pointer;
+  display: inline-block;
+  font-family: din-round,sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  line-height: 20px;
+  margin: 0;
+  outline: none;
+  overflow: visible;
+  /* padding: 13px 16px; */
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.yeet-button:after {
+  background-clip: padding-box;
+  background-color: #ffffff;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.yeet-button:main,
+.yeet-button:focus {
+  user-select: auto;
+}
+
+.yeet-button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.yeet-button:disabled {
+  cursor: auto;
+}
+
+.yeet-button:active {
+  border-width: 4px 0 0;
+  background: none;
+}
+
+
+
+.stripedTable {
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.stripedTable td,
+.stripedTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.stripedTable tr:nth-child(even) {
+    background-color: #ececec;
+}
+
+.stripedTable tr:nth-child(odd) {
+    background-color: white;
+}
+
+.stripedTable tr:hover {
+    background-color: #ddd;
+}
+
+.stripedTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #3b3b3b;
+    color: white;
+}

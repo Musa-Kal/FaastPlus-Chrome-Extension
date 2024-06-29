@@ -1,0 +1,67 @@
+<link href="popup.css" rel="stylesheet" type="text/css" />
+<script defer type="module" src="popup.js"></script>
+
+<div id="main-body-div">
+
+    <header>
+      <h3>FAAST <span>PLUS</span></h3>
+    </header>
+
+    <main>
+      <div id="lifetime-packed-display">
+        
+      </div>
+
+      <table id="packed-status" class="stripedTable">
+        <thead>
+          <th>Date</th>
+          <th class="sioc-color">SIOC</th>
+          <th class="multi-color">MULTIES</th>
+          <th class="single-color">SINGLES</th>
+          <th>Total</th>
+        </thead>
+
+        <tbody>
+
+        </tbody>
+      </table>
+
+      <div class="splitter"></div>
+
+      <div id="pickTask-controls">
+        <a title="display logs" id="displayLogsButton" class="control-button yeet-button"><img src="/assets/logs.png"></a>
+
+        <a title="edit records" id="editRecordsButton" class="control-button yeet-button"><img src="/assets/edit.png"></a>
+      </div>
+
+      <div class="splitter"></div>
+
+      <div id="editRecords-InputContainer" style="display: none;">
+        
+        <div class="inputRow" style="margin-top: 10px;">
+          <input id="edit-record-number-input" class="styled-textInput" type="number" placeholder="enter amount to edit">
+          <button edittype="ADD" id="editTypeSelection" style="color: green;">+</button>
+        </div>
+
+        <div class="inputRow my-1">
+          <button class="sioc-color editRecordsType-buttons yeet-button">SIOC</button>
+          <button class="multi-color editRecordsType-buttons yeet-button">MULTI</button>
+          <button class="single-color editRecordsType-buttons yeet-button">SINGLE</button>
+        </div>
+
+        <div class="inputRow">
+          <button class="btn-danger" id="clearRecord-btn">Clear ALL Reacords</button>
+        </div>
+
+      </div> 
+
+
+      <div id="dataDisplay" style="display: none;">
+        
+      </div>
+
+    </main>
+
+    
+
+</div>

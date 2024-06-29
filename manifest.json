@@ -1,0 +1,40 @@
+{
+    "name": "FAAST Plus",
+    "version": "0.1.0",
+    "description": "Improves amazon dropship's UI",
+    "permissions": ["storage", "tabs", "webRequest"],
+    "host_permissions": ["https://dropship.amazon.com/*"],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://dropship.amazon.com/*"],
+        "js": ["contentScript.js"]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "assets/delete.png",
+          "assets/logs.png",
+          "assets/save.png",
+          "assets/add.png",
+          "assets/edit.png",
+          "assets/remove.png"
+
+        ],
+        "matches": ["https://dropship.amazon.com/*"]
+      }
+    ],
+    "action": {
+      "default_icon": {
+        "16": "assets/faastPlus-icon.png",
+        "24": "assets/faastPlus-icon.png",
+        "32": "assets/faastPlus-icon.png"
+      },
+      "default_title": "FAAST Plus",
+      "default_popup": "popup.html"
+    },
+    "manifest_version": 3
+}
