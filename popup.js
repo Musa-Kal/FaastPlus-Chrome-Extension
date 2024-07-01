@@ -68,16 +68,6 @@ const displayLogs = async () => {
     const keys = ["time", "type", "desc"];
 
     currentRow = document.createElement("tr");
-
-    const dateOfLogsContainer = document.createElement("th");
-    dateOfLogsContainer.colSpan = 3;
-    dateOfLogsContainer.style.textAlign = "center";
-    dateOfLogsContainer.innerText = "DATE: " + previousLogs.date;
-    currentRow.appendChild(dateOfLogsContainer);
-
-    logsTable.appendChild(currentRow);
-
-    currentRow = document.createElement("tr");
     for (let key of keys) {
         let currentHeader = document.createElement("th");
         currentHeader.innerText = key.toUpperCase();
