@@ -12,20 +12,16 @@
             displayQuickPackPrompt();
         }
 
-
-        if (type === "COUNTUNITS") {
-            countAndSendUnits();
-        }
     });
 
 
 })();
 
-const addAndContinue = (typeOfOrder, quantityOfUnitsInOrder, scanAndVerifyButton) => {
+const addAndContinue = (identifierOfPickTask, quantityOfUnitsInOrder, scanAndVerifyButton, typeOfAdjustemnt) => {
 
     chrome.runtime.sendMessage( {
-        type: "QUICKPACK-ADD-UNITS-PACKED",
-        pickTaskType: typeOfOrder,
+        type: typeOfAdjustemnt,
+        pickTaskIdentifier: identifierOfPickTask,
         quantity: quantityOfUnitsInOrder,
     });
 
@@ -52,15 +48,24 @@ const displayQuickPackPrompt = () => {
                 "border: none;" + 
                 "color: white;" + 
                 "font-weight: bold;" +
-                "font-size: large;"
+                "font-size: large;" + 
+                "cursor: pointer;"
             );
+
+            currentButton.addEventListener("mouseover", () => {
+                currentButton.style.opacity = "80%";
+            });
+
+            currentButton.addEventListener("mouseout", () => {
+                currentButton.style.opacity = "100%";
+            })
 
             currentButton.innerText = "Add to " + type + " and Continue";
             const printLabelButton = document.querySelector("#printShippingLabels .ui-btn-text");
 
             currentButton.addEventListener("click", (event) => {
                 event.target.disabled = true;
-                addAndContinue(type, parseInt(printLabelButton.innerText.split("(")[1]), scanAndVerifyButton);
+                addAndContinue(type, parseInt(printLabelButton.innerText.split("(")[1]), scanAndVerifyButton, "QUICKPACK-ADD-UNITS-PACKED");
             });
 
             newElement.appendChild(currentButton);
@@ -139,39 +144,45 @@ const improveNewOrderUI = () => {
 }
 
 
-const getTypeOfOrder = (type, quantity) => {
-    if (type === "SIOC") {
-        return "SIOC"
-    } else if (quantity > 1) {
-        return "MULTI"
-    } else {
-        return "SINGLE"
+const improveScanAndVerifyUI = () => {
+
+    const orderJsonHiddenInput = document.getElementById("ordersJson")
+
+    if (orderJsonHiddenInput) {
+        const scanAndVerifyBtnParent = orderJsonHiddenInput.parentNode.parentNode;
+
+        if (!document.getElementById("addPickTaskAndContinue-btn")) {
+            let newBtn = createElementWithId("button", "addPickTaskAndContinue-btn");
+            newBtn.setAttribute("class", "btn");
+            newBtn.setAttribute("style", 
+                "height: 35px;" + 
+                "margin-top: 30px;" +
+                "background-color: " + "#ccf797" + ";" +
+                "font-weight: bold;" +
+                "font-size: large;"
+            );
+            newBtn.innerText = "Add Pick Task to total and Continue";
+
+            const scanAndVerifyButton = scanAndVerifyBtnParent.querySelector(".continue-to-scan-verify");
+            const type = document.querySelector(".pack-for-id h2").innerText.split(" ")[2];
+
+            newBtn.addEventListener("click", (event) => {
+                event.target.disabled = true;
+                addAndContinue(type, false, scanAndVerifyButton, "ADD-PICK-TASK-QUANTITY-TO-TOTAL");
+            });
+
+            scanAndVerifyBtnParent.parentNode.appendChild(newBtn);
+
+        }
     }
 };
 
-const countAndSendUnits = () => {
-    const scanTable = document.querySelectorAll("#scan-verify-table tr");
-    if (scanTable.length > 0) {
-
-        const totalUnitsInOrder = scanTable.length;
-        const orderType = getTypeOfOrder(document.getElementsByClassName("packageBoxName")[0].innerText.trim(), totalUnitsInOrder);
-        console.log(orderType + ": " + totalUnitsInOrder);
-
-        chrome.runtime.sendMessage({
-            type: "SET-CURRET-ORDER",
-            typeOfOrder: orderType,
-            quantity: totalUnitsInOrder,
-        });
-    }
-}
 
 const improveProductScanUI = () => {
 
     const scanTableElement = document.getElementById("scan-verify-table");
 
     if (scanTableElement) {
-
-        countAndSendUnits();
         
         const scanTable = scanTableElement.querySelectorAll("tr");
         
@@ -200,6 +211,8 @@ const improveProductScanUI = () => {
         const countDisplay = document.getElementById("item-count-display");
         countDisplay.innerHTML = "# of " + "<u>HIGHLIGHTED</u>" + " item to be Scanned: " + "<strong>" + scanableCount + "</strong>";
         
+    } else {
+        improveScanAndVerifyUI();
     }
 }
 

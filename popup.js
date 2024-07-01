@@ -14,6 +14,7 @@ const toggleEditType = () => {
 
     const inputElement = document.getElementById("editTypeSelection");
     const currentType = inputElement.getAttribute("edittype");
+    const amountToEditInput =  document.getElementById("edit-record-number-input");
 
     if (currentType === "ADD") {
 
@@ -21,11 +22,15 @@ const toggleEditType = () => {
         inputElement.style.color = "red";
         inputElement.setAttribute("edittype", "REMOVE");
 
+        amountToEditInput.style.color = "red";
+
     } else {
 
         inputElement.innerText = "+";
         inputElement.style.color = "green";
         inputElement.setAttribute("edittype", "ADD");
+
+        amountToEditInput.style.color = "green";
 
     };
 
@@ -35,11 +40,11 @@ const displayLogs = async () => {
     const editRecordsUi = document.getElementById("editRecords-InputContainer");
     editRecordsUi.style.display = "none";
 
-    const previousLogs = await fetchFromChromeStorage("TODAYS-FAASTPLUS-LOGS", undefined);
-
     const displayElement = document.getElementById("dataDisplay");
     displayElement.innerHTML = "";
     displayElement.style.display = "initial";
+
+    const previousLogs = await fetchFromChromeStorage("TODAYS-FAASTPLUS-LOGS", undefined);
 
     if (!previousLogs) {
         displayElement.innerText = "No logs found :("
@@ -49,9 +54,29 @@ const displayLogs = async () => {
     const logsTable = document.createElement("table");
     logsTable.setAttribute("class", "stripedTable");
 
+    let currentRow = document.createElement("tr");
+
+    const topMostHeader = document.createElement("th");
+    topMostHeader.colSpan = 3;
+    topMostHeader.style.textAlign = "center";
+    topMostHeader.innerText = "Date: " + previousLogs.date;
+    currentRow.appendChild(topMostHeader);
+    logsTable.appendChild(currentRow);
+
+
     const keys = ["time", "type", "desc"];
 
-    let currentRow = document.createElement("tr");
+    currentRow = document.createElement("tr");
+
+    const dateOfLogsContainer = document.createElement("th");
+    dateOfLogsContainer.colSpan = 3;
+    dateOfLogsContainer.style.textAlign = "center";
+    dateOfLogsContainer.innerText = "DATE: " + previousLogs.date;
+    currentRow.appendChild(dateOfLogsContainer);
+
+    logsTable.appendChild(currentRow);
+
+    currentRow = document.createElement("tr");
     for (let key of keys) {
         let currentHeader = document.createElement("th");
         currentHeader.innerText = key.toUpperCase();
@@ -79,28 +104,77 @@ const displayLogs = async () => {
 };
 
 
+function isInteger(str) {
+    if (typeof str != "string") return false 
+    return !isNaN(str) && !isNaN(parseInt(str)) 
+}
 
-const clearAllRecords = () => {
-    chrome.runtime.sendMessage({
+
+const clearAllRecords = async () => {
+    await chrome.runtime.sendMessage({
         type: "RESET-ALL-RECORDS",
-    }, updateStats);
+    }, (response) => {updateStats(response);});
 };
 
 
-const adjustRecords = (typeOfAdjustment, typeOfOrder, quantityToAdjust) => {
-    chrome.runtime.sendMessage({
+const sendAdjustRecordsRequest = async (typeOfAdjustment, typeOfOrder, quantityToAdjust) => {
+    await chrome.runtime.sendMessage({
         type: "ADJUST-RECENT-RECORDS",
         AdjustmentType: typeOfAdjustment,
         OrderType: typeOfOrder,
         quantity: quantityToAdjust,
-    }, updateStats);
+    }, response => {updateStats(response);});
 };
 
-const updateStats = () => {
-    displayLifeTimePacked();
 
-    displayRecentlyPacked();
+
+const adjustRecords = async (typeOfOrder) => {
+    const amountToEditInput =  document.getElementById("edit-record-number-input");
+    const amountToEdit =  amountToEditInput.value;
+    const typeSelection  = document.getElementById("editTypeSelection").getAttribute("edittype");
+
+    const allowedTypes = ["ADD", "REMOVE"];
+    const allowedOrderTypes = ["SIOC", "SINGLE", "MULTI"];
+
+    if (allowedOrderTypes.includes(typeOfOrder) && allowedTypes.includes(typeSelection) && isInteger(amountToEdit)) {
+        await sendAdjustRecordsRequest(typeSelection, typeOfOrder, parseInt(amountToEdit));
+    };
+
+    amountToEditInput.value = "";
 };
+
+
+
+
+const updateStats = (response) => {
+
+    if (!response) {
+        return;
+    };
+
+    const {state, message} = response;
+
+    if (state === "SUCCESS") {
+        displayLifeTimePacked();
+
+        displayRecentlyPacked();
+    } else if (state === "FAIL") {
+        const errorDisplay = document.getElementById("errorDisplay");
+
+        errorDisplay.style.display = "initial";
+        errorDisplay.innerHTML = "<p class='error'>" +  message + "</p>";
+
+        setTimeout(() => {
+            const errorDisplay = document.getElementById("errorDisplay");
+
+            errorDisplay.style.display = "none";
+            errorDisplay.innerText = "";
+        }, 5000);
+    }
+    
+};
+
+
 
 const displayLifeTimePacked = async () => {
     const displayElement = document.getElementById("lifetime-packed-display");
@@ -136,7 +210,9 @@ const displayRecentlyPacked = async () => {
     const tableElementBody = document.querySelector("#packed-status tbody");
     tableElementBody.innerHTML = ""
 
-    for (let data of previouslyPacked) {
+    for (let i=previouslyPacked.length-1; i>=0; i--) {
+        let data = previouslyPacked[i];
+        
         let currentRow = document.createElement("tr");
         
         let currentTotalPacked = 0;
@@ -180,6 +256,10 @@ const editRecordsButton = document.getElementById("editRecordsButton");
 
 const editTypeSelectionButton = document.getElementById("editTypeSelection");
 
+const adjustmentTypeBtnContainer = document.getElementById("adjustmentTypeBtnContainer");
+
+const amountToEditInput =  document.getElementById("edit-record-number-input");
+
 
 document.addEventListener("DOMContentLoaded", () => {
     
@@ -191,8 +271,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editRecordsButton.addEventListener("click", showEditRecordsUi);
 
-    clearAllRecordsButton.addEventListener("click", clearAllRecords);
+    clearAllRecordsButton.addEventListener("click", () => {
+        if (window.confirm("Are You Sure You Want to Clear All Records?")) {
+            clearAllRecords();
+        };
+    });
 
     editTypeSelectionButton.addEventListener("click", toggleEditType);
 
+    amountToEditInput.style.color = "green";
+
+    adjustmentTypeBtnContainer.querySelector("button[name=SIOC]").addEventListener("click", () => {adjustRecords("SIOC");});
+    adjustmentTypeBtnContainer.querySelector("button[name=MULTI]").addEventListener("click", () => {adjustRecords("MULTI");});
+    adjustmentTypeBtnContainer.querySelector("button[name=SINGLE]").addEventListener("click", () => {adjustRecords("SINGLE");});
 });

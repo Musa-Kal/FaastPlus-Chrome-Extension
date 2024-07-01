@@ -27,36 +27,39 @@ chrome.tabs.onUpdated.addListener((tabId) => {
 
 
 
-let currentLabel = undefined;
-chrome.tabs.onActivated.addListener( ({tabId}) => {
-        if (tabId) {
-            chrome.tabs.get(tabId, (tab) => {
-                if (tab.url.includes("dropship.amazon.com/web/pack/packBulk/picktask")) {
-                    chrome.tabs.sendMessage(tabId, {
-                        type: "COUNTUNITS",
-                    });
-                }
-            })
-        }
-});
+// let currentLabel = undefined;
+// chrome.tabs.onActivated.addListener( ({tabId}) => {
+//         if (tabId) {
+//             chrome.tabs.get(tabId, (tab) => {
+//                 if (tab.url.includes("dropship.amazon.com/web/pack/packBulk/picktask")) {
+//                     chrome.tabs.sendMessage(tabId, {
+//                         type: "COUNTUNITS",
+//                     });
+//                 }
+//             })
+//         }
+// });
 
 
 
 
-chrome.runtime.onMessage.addListener(async (obj, sender, response) => {
+chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
     const {type} = obj;
 
-    if (type === "SET-CURRET-ORDER") {
+    // if (type === "SET-CURRET-ORDER") {
 
-        currentLabel = {
-            type: obj.typeOfOrder,
-            quantity: obj.quantity,
-        };
+    //     currentLabel = {
+    //         type: obj.typeOfOrder,
+    //         quantity: obj.quantity,
+    //     };
 
-    } else if (type === "QUICKPACK-ADD-UNITS-PACKED") {
+    //     console.log("set")
+
+    // } 
+    if (type === "QUICKPACK-ADD-UNITS-PACKED") {
 
         const currentPickTask = {
-            type: obj.pickTaskType,
+            type: obj.pickTaskIdentifier,
             quantity: obj.quantity,
         };
 
@@ -64,19 +67,151 @@ chrome.runtime.onMessage.addListener(async (obj, sender, response) => {
         const todayDate = currentDateAndTime.toLocaleDateString("en-US");
         const currentTime = ('0' + currentDateAndTime.getHours()).slice(-2) + ":" +('0' + currentDateAndTime.getMinutes()).slice(-2);
 
-        await addToPreviouslyPacked(todayDate, currentPickTask);
+        addToPreviouslyPacked(todayDate, currentPickTask);
         
-        await addToLifeTimePacked(currentPickTask);
+        addToLifeTimePacked(currentPickTask);
 
         const newLog = createNewLog(currentTime, "QUICK PACK ADDED", currentPickTask.quantity + " " + currentPickTask.type + " added to total");
 
-        await saveLog(todayDate, newLog);
+        saveLog(todayDate, newLog);
 
     } else if (type === "RESET-ALL-RECORDS") {
-        await clearAllRecords();
+        clearAllRecords().then(response => {
+            sendResponse(response);
+        })
+
+        
+    } else if (type === "ADJUST-RECENT-RECORDS") {
+        editRecords(obj.AdjustmentType, obj.OrderType, obj.quantity).then(response => {
+            sendResponse(response);
+        })
+    } else if (type === "ADD-PICK-TASK-QUANTITY-TO-TOTAL" && obj.pickTaskIdentifier) {
+        fetch("https://dropship.amazon.com/web/ajax/search/getItemsById?id="+obj.pickTaskIdentifier)
+        .then((response) => {
+            if  (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        })
+        .then((data) => {
+
+            const pickTaskInfo = data.items.PickTask[0];
+
+            if (!pickTaskInfo) {
+                return Promise.reject(data);
+            }
+
+            const pickTaskQuantity = pickTaskInfo.totalQuantity;
+            let pickTaskType = "MULTI";
+
+            for (let attribute of pickTaskInfo.attributes) {
+                let {attributeValue, attributeName} = attribute;
+
+                if (attributeName === "sioc" && attributeValue) {
+                    pickTaskType = "SIOC";
+                    break;
+                } else if (attributeName === "single" && attributeValue) {
+                    pickTaskType = "SINGLE";
+                }
+            }
+
+            const currentPickTask = {
+                type: pickTaskType,
+                quantity: pickTaskQuantity, 
+            };
+    
+            const currentDateAndTime =  new Date();
+            const todayDate = currentDateAndTime.toLocaleDateString("en-US");
+            const currentTime = ('0' + currentDateAndTime.getHours()).slice(-2) + ":" +('0' + currentDateAndTime.getMinutes()).slice(-2);
+    
+            addToPreviouslyPacked(todayDate, currentPickTask);
+            
+            addToLifeTimePacked(currentPickTask);
+    
+            const newLog = createNewLog(currentTime, "PICK TASK TOTAL ADDED", currentPickTask.quantity + " " + currentPickTask.type + " added to total");
+    
+            saveLog(todayDate, newLog);
+
+        })
+        .catch((response) => {
+            const currentDateAndTime =  new Date();
+            const todayDate = currentDateAndTime.toLocaleDateString("en-US");
+            const currentTime = ('0' + currentDateAndTime.getHours()).slice(-2) + ":" +('0' + currentDateAndTime.getMinutes()).slice(-2);
+
+            const newLog = createNewLog(currentTime, "ERROR", "Error Identifying Pick Task");
+    
+            saveLog(todayDate, newLog);
+        })
     }
+
+
+    return true;
     
 });
+
+
+const editRecords = async (typeOfEdit, typeOfOrderToEdit, amountToEdit) => {
+    const allowedTypes = ["ADD", "REMOVE"];
+    const allowedOrderTypes = ["SIOC", "SINGLE", "MULTI"];
+    let response = {state: "FAIL", message: "Invalid Request"};
+
+    if (allowedTypes.includes(typeOfEdit) && allowedOrderTypes.includes(typeOfOrderToEdit) && (typeof amountToEdit) === 'number') {
+
+        const currentDateAndTime =  new Date();
+        const todayDate = currentDateAndTime.toLocaleDateString("en-US");
+        const currentTime = ('0' + currentDateAndTime.getHours()).slice(-2) + ":" +('0' + currentDateAndTime.getMinutes()).slice(-2);
+
+        if (typeOfEdit === "ADD") {
+
+            const adjustment = {
+                type: typeOfOrderToEdit,
+                quantity: amountToEdit,
+            };
+
+            await addToPreviouslyPacked(todayDate, adjustment);
+        
+            await addToLifeTimePacked(adjustment);
+
+            const newLog = createNewLog(currentTime, "RECORD ADJUSTMENT", amountToEdit + " " + typeOfOrderToEdit + " add to total");
+
+            await saveLog(todayDate, newLog);
+
+            response = {state: "SUCCESS", message: "Successfully Adjusted Records"};
+
+        } else if (typeOfEdit === "REMOVE") {
+            
+            const recentlyPacked = formateRecentlyPacked(await fetchFromChromeStorage("RECENTLY-PACKED", []), todayDate);
+
+            if (recentlyPacked[recentlyPacked.length-1][typeOfOrderToEdit] >= amountToEdit) {
+
+                const adjustment = {
+                    type: typeOfOrderToEdit,
+                    quantity: -amountToEdit,
+                };
+
+                await addToPreviouslyPacked(todayDate, adjustment);
+        
+                await addToLifeTimePacked(adjustment);
+
+                const newLog = createNewLog(currentTime, "RECORD ADJUSTMENT", amountToEdit + " " + typeOfOrderToEdit + " removed from total");
+
+                await saveLog(todayDate, newLog);
+
+                response = {state: "SUCCESS", message: "Successfully Adjusted Records"};
+
+            } else {
+                response = {state: "FAIL", message: "Invalid Request, amount to remove greater then currently packed"};
+            }
+
+        }
+
+    }
+
+    return response;
+
+};
+
+
 
 
 const clearAllRecords = async () => {
@@ -87,18 +222,22 @@ const clearAllRecords = async () => {
 
     let desc = "Records Successfully Reset";
     let type = "RESET";
+    let currentSate = "SUCCESS";
 
     chrome.storage.sync.remove(["LIFETIME-PACKED", "RECENTLY-PACKED", "TODAYS-FAASTPLUS-LOGS"], function(){
         var error = chrome.runtime.lastError;
         if (error) {
           desc = "Reset Failed!";
           type = "ERROR";
+          currentSate = "FAIL";
         }
     });
 
     const newLog = createNewLog(currentTime, type, desc);
 
     await saveLog(todayDate, newLog);
+
+    return {state: currentSate, message: desc};
 
 }
 
@@ -115,19 +254,19 @@ const createNewLog = (timeOfLog, typeOfLog, descriptionOfLog) => {
 
 
 const saveLog = async (todaysDate, newLog) => {
-    let currerntLogs = await fetchFromChromeStorage("TODAYS-FAASTPLUS-LOGS", {});
+    let currentLogs = await fetchFromChromeStorage("TODAYS-FAASTPLUS-LOGS", {});
 
-    if (currerntLogs.date != todaysDate) {
-        currerntLogs = {
+    if (currentLogs.date != todaysDate) {
+        currentLogs = {
             date: todaysDate,
             logs: [],
         };
     };
 
-    currerntLogs.logs.push(newLog);
+    currentLogs.logs.push(newLog);
 
     chrome.storage.sync.set({
-        ["TODAYS-FAASTPLUS-LOGS"]: JSON.stringify(currerntLogs)
+        ["TODAYS-FAASTPLUS-LOGS"]: JSON.stringify(currentLogs)
     });
 };
 
@@ -167,7 +306,7 @@ const formateRecentlyPacked = (data, todayDate) => {
 const addToPreviouslyPacked = async (date, order) => {
     let recentlyPacked = formateRecentlyPacked(await fetchFromChromeStorage("RECENTLY-PACKED", []), date);
     recentlyPacked[recentlyPacked.length-1][order.type] += order.quantity;
-
+    
     chrome.storage.sync.set({
         ["RECENTLY-PACKED"]: JSON.stringify(recentlyPacked)
     });
@@ -188,33 +327,33 @@ const addToLifeTimePacked = async (order) => {
 
 
 
-chrome.webRequest.onBeforeSendHeaders.addListener(async ({url}) => {
-    if (url && url.includes("dropship.amazon.com/web/packPackage/")) {
-        console.log(currentLabel);
+// chrome.webRequest.onBeforeSendHeaders.addListener(async ({url}) => {
+//     if (url && url.includes("dropship.amazon.com/web/packPackage/")) {
+//         console.log(currentLabel);
 
-        const currentDateAndTime =  new Date();
-        const todayDate = currentDateAndTime.toLocaleDateString("en-US");
-        const currentTime = ('0' + currentDateAndTime.getHours()).slice(-2) + ":" +('0' + currentDateAndTime.getMinutes()).slice(-2);
-
-
-        if (!currentLabel) {
-            const newErrorLog = createNewLog(currentTime, "ERROR", "Couldn't identify the order packed!");
-
-            await saveLog(todayDate, newErrorLog);
-
-            return;
-        };
+//         const currentDateAndTime =  new Date();
+//         const todayDate = currentDateAndTime.toLocaleDateString("en-US");
+//         const currentTime = ('0' + currentDateAndTime.getHours()).slice(-2) + ":" +('0' + currentDateAndTime.getMinutes()).slice(-2);
 
 
-        await addToPreviouslyPacked(todayDate, currentLabel);
+//         if (!currentLabel) {
+//             const newErrorLog = createNewLog(currentTime, "ERROR", "Couldn't identify the order packed!");
+
+//             await saveLog(todayDate, newErrorLog);
+
+//             return;
+//         };
+
+
+//         await addToPreviouslyPacked(todayDate, currentLabel);
         
-        await addToLifeTimePacked(currentLabel);
+//         await addToLifeTimePacked(currentLabel);
 
-        const newLog = createNewLog(currentTime, "ORDER PACKED", currentLabel.quantity + " " + currentLabel.type + " add to total");
+//         const newLog = createNewLog(currentTime, "ORDER PACKED", currentLabel.quantity + " " + currentLabel.type + " add to total");
 
-        await saveLog(todayDate, newLog);
+//         await saveLog(todayDate, newLog);
 
-        currentLabel = undefined;
+//         currentLabel = undefined;
         
-    }
-}, {urls: ["<all_urls>"]});
+//     }
+// }, {urls: ["<all_urls>"]});

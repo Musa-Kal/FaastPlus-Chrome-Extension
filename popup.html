@@ -43,14 +43,18 @@
           <button edittype="ADD" id="editTypeSelection" style="color: green;">+</button>
         </div>
 
-        <div class="inputRow my-1">
-          <button class="sioc-color editRecordsType-buttons yeet-button">SIOC</button>
-          <button class="multi-color editRecordsType-buttons yeet-button">MULTI</button>
-          <button class="single-color editRecordsType-buttons yeet-button">SINGLE</button>
+        <div class="inputRow my-1" id="adjustmentTypeBtnContainer">
+          <button name="SIOC" class="sioc-color editRecordsType-buttons yeet-button">SIOC</button>
+          <button name="MULTI" class="multi-color editRecordsType-buttons yeet-button">MULTI</button>
+          <button name="SINGLE" class="single-color editRecordsType-buttons yeet-button">SINGLE</button>
         </div>
 
         <div class="inputRow">
-          <button class="btn-danger" id="clearRecord-btn">Clear ALL Reacords</button>
+          <button class="btn-danger yeet-button" id="clearRecord-btn">Clear ALL Reacords</button>
+        </div>
+
+        <div id="errorDisplay" class="inputRow" style="display: none;">
+
         </div>
 
       </div> 

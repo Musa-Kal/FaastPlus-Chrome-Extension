@@ -11,17 +11,6 @@ body {
     color: white;
 }
 
-/* #packed-status td, th {
-    border-radius: 2px;
-    padding: 5px 10px;
-    border: 2px solid lightgray;
-}
-
-
-
-#packed-status td, th {
-    border-collapse: collapse;
-} */
 
 
 .splitter {
@@ -42,6 +31,7 @@ body {
     width: 45% !important; 
     height: 40px;
     display: flex;
+    user-select: none;
 }
 
 .control-button img {
@@ -53,6 +43,19 @@ body {
 #editRecords-InputTable {
     margin: 10px auto;
     width: 100%;
+}
+
+
+
+.error {
+    background-color: rgb(255, 197, 197);
+    color: red;
+    margin: 5px;
+    margin-top: 20px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid red;
+    font-weight: bold;
 }
 
 
@@ -92,7 +95,7 @@ body {
 }
 
 .single-color {
-    color: rgb(85, 85, 249);
+    color: rgb(0 184 255);
 }
 
 
@@ -137,11 +140,12 @@ body {
   }
 
 .btn-danger {
-    background-color: red;
+    background-color: rgb(175, 0, 0) !important;
     color: white;
-    border: 2px solid white;
-    border-radius: 10px;
-    font-weight: bolder;
+}
+
+.btn-danger:after {
+    background-color: red !important;
 }
 
 #clearRecord-btn {
@@ -214,7 +218,7 @@ body {
 
 .yeet-button:active {
   border-width: 4px 0 0;
-  background: none;
+  background: none !important;
 }
 
 
