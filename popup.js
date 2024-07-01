@@ -41,10 +41,11 @@ const displayLogs = async () => {
     editRecordsUi.style.display = "none";
 
     const displayElement = document.getElementById("dataDisplay");
-    displayElement.innerHTML = "";
+    displayElement.innerHTML = '<div class="splitter my-1"></div>';
     displayElement.style.display = "initial";
 
     const previousLogs = await fetchFromChromeStorage("TODAYS-FAASTPLUS-LOGS", undefined);
+
 
     if (!previousLogs) {
         displayElement.innerText = "No logs found :("
@@ -284,4 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
     adjustmentTypeBtnContainer.querySelector("button[name=SIOC]").addEventListener("click", () => {adjustRecords("SIOC");});
     adjustmentTypeBtnContainer.querySelector("button[name=MULTI]").addEventListener("click", () => {adjustRecords("MULTI");});
     adjustmentTypeBtnContainer.querySelector("button[name=SINGLE]").addEventListener("click", () => {adjustRecords("SINGLE");});
+
+    document.querySelector("footer .gitHub-Style-btn").addEventListener("click", () => {
+        chrome.tabs.create({active: true, url: "https:github.com/Musa-Kal"});
+    });
 });
