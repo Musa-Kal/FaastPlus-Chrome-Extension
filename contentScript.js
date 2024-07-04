@@ -161,7 +161,7 @@ const improveScanAndVerifyUI = () => {
                 "font-weight: bold;" +
                 "font-size: large;"
             );
-            newBtn.innerText = "Add Pick Task to total and Continue";
+            newBtn.innerText = "Add Pick Task to Total and Continue";
 
             const scanAndVerifyButton = scanAndVerifyBtnParent.querySelector(".continue-to-scan-verify");
             const type = document.querySelector(".pack-for-id h2").innerText.split(" ")[2];
