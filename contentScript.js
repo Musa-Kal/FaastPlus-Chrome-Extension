@@ -10,12 +10,47 @@
             improveNewOrderUI();
         } else if (type === "DISPLAY-QUICKPACK-PROMPT") {
             displayQuickPackPrompt();
+        } else if (type === "DISPLAY-PICK-TASK-QUANTITY") {
+            if (obj.quantity) {
+                displayPickTaskQuantityOnPrint(obj.quantity);
+            }
         }
 
     });
 
 
 })();
+
+
+// TODO: Implement PA view to ready to pick
+
+const stringToColour = (str) => {
+    let hash = 0;
+    for  (let i=0; i<str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) + hash)
+    }
+    let colour = '#'
+    for (let i = 0; i < 3; i++) {
+      colour += ((hash >> (i * 8)) & 0xff).toString(16).padStart(2, '0')
+    }
+    return colour
+}
+
+const displayPickTaskQuantityOnPrint = (pickTaskQuantity) => {
+    const quantityColumn = document.querySelector(".quantity-column");
+
+    if (quantityColumn) {
+        quantityColumn.innerHTML = "";
+        quantityColumn.innerText = "Quantity to Pick: ";
+
+        const quantityElement = document.createElement("span");
+        quantityElement.style.fontSize = "15px";
+        quantityElement.style.fontWeight = "bold";
+        quantityElement.innerText = pickTaskQuantity;
+
+        quantityColumn.appendChild(quantityElement);
+    }
+};
 
 const addAndContinue = (identifierOfPickTask, quantityOfUnitsInOrder, scanAndVerifyButton, typeOfAdjustemnt) => {
 
@@ -161,7 +196,7 @@ const improveScanAndVerifyUI = () => {
                 "font-weight: bold;" +
                 "font-size: large;"
             );
-            newBtn.innerText = "Add Pick Task to total and Continue";
+            newBtn.innerText = "Add Pick Task to Total and Continue";
 
             const scanAndVerifyButton = scanAndVerifyBtnParent.querySelector(".continue-to-scan-verify");
             const type = document.querySelector(".pack-for-id h2").innerText.split(" ")[2];
@@ -216,34 +251,146 @@ const improveProductScanUI = () => {
     }
 }
 
+
+const showTotalAssignedPickTasks = () => {
+
+    if (!document.getElementById("assigned-pickTasks")) {
+        const [titleElement] = document.getElementsByClassName("orange-title");
+        titleElement.style.display = "flex";
+        titleElement.style.justifyContent = "space-between";
+
+        const newElement = createElementWithId("h4", "assigned-pickTasks");
+        newElement.style.margin = "auto 0";
+        newElement.style.color = "#666";
+        newElement.style.textDecoration = "underline";
+        titleElement.appendChild(newElement);
+    }
+
+    const pickTaskCount = document.getElementById("assigned-pickTasks");
+
+    let count = 0;
+    const userName = document.getElementsByClassName("userinfo-container")[0].innerText.split("(")[0].trim();
+    
+    for (let childEle of document.querySelectorAll("#picktask_table tbody tr")) {
+        if (childEle.children[4].innerText.trim() == userName) {
+            count ++;
+        }
+    }
+
+    pickTaskCount.innerHTML = "Pick Tasks Assigned to you: " + "<span style=\"font-weight: bold;\">" + count + "</span>";
+
+};
+
+
+
+const getPickTaskType = (attributesElement) => {
+    
+    if (!attributesElement) {
+        return undefined;
+    }
+
+    let pickTaskType = "MULTI";
+
+    for (let currentAttribute of  attributesElement.children) {
+        if (currentAttribute.title === "SIOC") {
+            return "SIOC";
+        } else if (currentAttribute.title === "Single") {
+            pickTaskType = "SINGLE";
+        }
+    }
+
+    return pickTaskType;
+};
+
+
+const displayAllPickTaskInfo = () => {
+    const orangeTitle = document.querySelector(".orange-title");
+
+    if (!document.getElementById("advancePickTaskDisplay")) {
+        const newElement = createElementWithId("div", "advancePickTaskDisplay");
+        newElement.setAttribute("style", "width: 100%; margin-top: 20px;");
+        orangeTitle.parentNode.insertBefore(newElement, orangeTitle);
+    }
+
+    const advancePickTaskDisplay = document.getElementById("advancePickTaskDisplay");
+    advancePickTaskDisplay.innerHTML = "";
+
+    const barContainer = document.createElement("div");
+    barContainer.setAttribute("style", "width: 100%; display: flex;");
+    advancePickTaskDisplay.appendChild(barContainer);
+
+    const moreAdvancePickTaskDisplay = createElementWithId("table", "moreAdvancePickTaskDisplay");
+    moreAdvancePickTaskDisplay.setAttribute("style", "width: 100%;");
+    advancePickTaskDisplay.appendChild(moreAdvancePickTaskDisplay);
+
+    let nameToIndex = {};
+    let countByName = [];
+    let currentIndex = 0;
+    let totalPickTasks = 0;
+
+    for (let childEle of document.querySelectorAll("#picktask_table tbody tr")) {
+        let currentPickTaskAssignee = childEle.children[4].innerText.trim();
+        let currentPickTaskUnits = parseInt(childEle.children[6].querySelector("div[role=\"progressbar\"]").ariaValueMax);
+        let currentPickTaskType = getPickTaskType(childEle.children[7]);
+        let currentPickTaskOrders = parseInt(childEle.children[8].querySelector("div[role=\"progressbar\"]").ariaValueMax);
+
+        //console.log(currentPickTaskUnits + '   ' + currentPickTaskType + '     ' + currentPickTaskOrders);
+        if (currentPickTaskAssignee === "") {
+            currentPickTaskAssignee = "unassigned";
+        };
+        
+        if (!(currentPickTaskAssignee in nameToIndex)) {
+            nameToIndex[currentPickTaskAssignee] = currentIndex;
+            currentIndex ++;
+
+            countByName.push({name: currentPickTaskAssignee, amountAssigned: 0});
+        }
+        
+        countByName[nameToIndex[currentPickTaskAssignee]].amountAssigned ++;
+        
+
+        totalPickTasks ++;
+
+    }
+    
+    countByName.sort((a, b) => b.amountAssigned - a.amountAssigned);
+
+    for (let currentAssigneeInfo of countByName) {
+        let currentBar = document.createElement("div");
+        currentBar.setAttribute("style", 
+            "width: "+ (currentAssigneeInfo.amountAssigned / totalPickTasks) * 100 +"%;" + 
+            "border-top: 15px solid "+ stringToColour(currentAssigneeInfo.name) +";" + 
+            "border-radius: 5rem;" + 
+            "transition-duration: 100ms;" + 
+            "cursor: pointer;"  
+        );
+        currentBar.title = currentAssigneeInfo.name + ", " + currentAssigneeInfo.amountAssigned + " Pick Task | " + Math.floor((currentAssigneeInfo.amountAssigned / totalPickTasks) * 100) +"%";
+    
+        currentBar.addEventListener("mouseover", () => {
+            currentBar.style.zIndex = "1";
+            currentBar.style.transform = "scale(1.1)";
+        });
+
+        currentBar.addEventListener("mouseout", () => {
+            currentBar.style.zIndex = "0";
+            currentBar.style.transform = "scale(1)";
+        })
+
+        barContainer.appendChild(currentBar);
+    }   
+
+
+
+};
+
 const improveReadyToPickUI = () => {
     
     if (document.getElementById("selected_status_for_showing_pick_tasks")) {
-        if (!document.getElementById("assigned-pickTasks")) {
-            const [titleElement] = document.getElementsByClassName("orange-title");
-            titleElement.style.display = "flex";
-            titleElement.style.justifyContent = "space-between";
-
-            const newElement = createElementWithId("h4", "assigned-pickTasks");
-            newElement.style.margin = "auto 0";
-            newElement.style.color = "#666";
-            newElement.style.textDecoration = "underline";
-            titleElement.appendChild(newElement);
+        if (true) {
+            displayAllPickTaskInfo();
+        } else {
+            showTotalAssignedPickTasks();
         }
-
-        const pickTaskCount = document.getElementById("assigned-pickTasks");
-
-        let count = 0;
-        const userName = document.getElementsByClassName("userinfo-container")[0].innerText.split("(")[0].trim();
-        
-        for (let childEle of document.querySelectorAll("#picktask_table tbody tr")) {
-            if (childEle.children[4].innerText.trim() == userName) {
-                count ++;
-            }
-        }
-
-        pickTaskCount.innerHTML = "Pick Tasks Assigned to you: " + "<span style=\"font-weight: bold;\">" + count + "</span>";
-
     }
 }
 
