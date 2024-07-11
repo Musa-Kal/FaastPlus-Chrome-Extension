@@ -24,8 +24,6 @@
 })();
 
 
-// TODO: Implement PA view to ready to pick
-
 const stringToColour = (str) => {
     let hash = 0;
     for  (let i=0; i<str.length; i++) {
@@ -221,14 +219,14 @@ const improveProductScanUI = (improveNewOrderScanUiEnabled) => {
 
     if (improveNewOrderScanUiEnabled && scanTableElement) {
         
-        const scanTable = scanTableElement.querySelectorAll("tr");
+        const scanTable = scanTableElement.querySelector("tbody").children;
         
         
         let scanableCount = 0;
-        const topElement_fnsku = scanTable[0].querySelector(".fnsku-scan").getAttribute("fnsku");
+        const topElement_fnsku = scanTable[0].children[2].querySelector(".fnsku-scan").getAttribute("fnsku");
 
         for (let element of scanTable) {
-            let fnskuElement = element.getElementsByClassName("fnsku-scan")[0];
+            let fnskuElement = element.children[2].querySelector(".fnsku-scan");
 
             if (fnskuElement.getAttribute("fnsku") === topElement_fnsku && (!fnskuElement.classList.contains("scan-verified"))) {
                 scanableCount ++;
