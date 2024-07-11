@@ -2,10 +2,12 @@
 
     chrome.runtime.onMessage.addListener((obj, sender, response) => {
         const {type} = obj;
-        if (type === "NEWORDER") {
-            improveProductScanUI();
+        if (type === "SINGLE-ORDER-SCAN-PAGE") {
+            improveProductScanUI(obj.improveNewOrderScanUiEnabled);
+        } else if (type === "SHOW-ADVANCE-PICKTASK-COUNT") {
+            displayAllPickTaskInfo();
         } else if (type === "COUNTPICKTASK") {
-            improveReadyToPickUI();
+            showTotalAssignedPickTasks();
         } else if  (type === "DISPLAY-PRODUCT-IMAGE") {
             improveNewOrderUI();
         } else if (type === "DISPLAY-QUICKPACK-PROMPT") {
@@ -213,11 +215,11 @@ const improveScanAndVerifyUI = () => {
 };
 
 
-const improveProductScanUI = () => {
+const improveProductScanUI = (improveNewOrderScanUiEnabled) => {
 
     const scanTableElement = document.getElementById("scan-verify-table");
 
-    if (scanTableElement) {
+    if (improveNewOrderScanUiEnabled && scanTableElement) {
         
         const scanTable = scanTableElement.querySelectorAll("tr");
         
@@ -246,13 +248,17 @@ const improveProductScanUI = () => {
         const countDisplay = document.getElementById("item-count-display");
         countDisplay.innerHTML = "# of " + "<u>HIGHLIGHTED</u>" + " item to be Scanned: " + "<strong>" + scanableCount + "</strong>";
         
-    } else {
+    } else if (!scanTableElement) {
         improveScanAndVerifyUI();
     }
 }
 
 
 const showTotalAssignedPickTasks = () => {
+
+    if (!document.getElementById("selected_status_for_showing_pick_tasks")) {
+        return;
+    }
 
     if (!document.getElementById("assigned-pickTasks")) {
         const [titleElement] = document.getElementsByClassName("orange-title");
@@ -289,11 +295,13 @@ const getPickTaskType = (attributesElement) => {
         return undefined;
     }
 
-    let pickTaskType = "MULTI";
+    let pickTaskType = "OTHER";
 
     for (let currentAttribute of  attributesElement.children) {
         if (currentAttribute.title === "SIOC") {
             return "SIOC";
+        } else if (currentAttribute.title === "Multi") {
+            return "MULTI";
         } else if (currentAttribute.title === "Single") {
             pickTaskType = "SINGLE";
         }
@@ -303,7 +311,94 @@ const getPickTaskType = (attributesElement) => {
 };
 
 
+const displayMoreDetailsOfAssignee = (displayElement, assigneeData) => {
+
+    displayElement.innerHTML = "";
+
+    const title = document.createElement("h3");
+    title.setAttribute("style", 
+        "text-align: center;" + 
+        "border-bottom: 2px solid" + assigneeData.themeColor + ";"
+    );
+    title.innerText = assigneeData.name;
+    displayElement.appendChild(title);
+
+    const tableElement = document.createElement("table");
+    tableElement.setAttribute("style", 
+        "color: black;" +
+        "font-family: Arial, Helvetica, sans-serif;" +
+        "border-collapse: collapse;" +
+        "width: 100%;"
+    );
+    displayElement.appendChild(tableElement);
+
+
+    const rowKeys = ["SIOC", "MULTI", "SINGLE", "OTHER"];
+    const colKeys = ["pickTasks", "orders", "units"];
+
+
+    const titleCellStyle = (
+        "padding-top: 12px;" +
+        "padding-bottom: 12px;" +
+        "text-align: left;" +
+        "background-color: #3b3b3b;" +
+        "color: white;"
+    );
+
+
+    const regularCellStyle = (
+        "border: 1px solid #ddd;" +
+        "padding: 8px;"
+    );
+
+    let currentRow = document.createElement("tr");
+    tableElement.appendChild(currentRow);
+    
+    let currentCell = document.createElement("td");
+    currentCell.setAttribute("style", regularCellStyle + titleCellStyle);
+    currentRow.appendChild(currentCell);
+
+    for (let key of rowKeys) {
+        currentCell = document.createElement("td");
+        currentCell.setAttribute("style", regularCellStyle + titleCellStyle);
+        currentCell.innerText = key;
+        currentRow.appendChild(currentCell);
+    };
+
+    const backgroundColors = ["#ececec", "white"];
+    const displayColKeysNames = ["Pick Tasks", "Orders", "Units"];
+
+    for (let i=0; i<colKeys.length; i++) {
+        let colKey = colKeys[i];
+
+        currentRow = document.createElement("tr");
+        currentRow.style.backgroundColor = backgroundColors[i&1];
+
+        currentCell = document.createElement("td");
+        currentCell.setAttribute("style", regularCellStyle + titleCellStyle);
+        currentCell.innerText = displayColKeysNames[i];
+        currentRow.appendChild(currentCell);
+
+        for (let rowKey of rowKeys) {
+            currentCell = document.createElement("td");
+            currentCell.setAttribute("style", regularCellStyle);
+            currentCell.innerText = assigneeData[rowKey][colKey];
+            currentRow.appendChild(currentCell);
+        }
+
+        tableElement.appendChild(currentRow);
+    }
+
+
+};
+
+
 const displayAllPickTaskInfo = () => {
+
+    if (!document.getElementById("selected_status_for_showing_pick_tasks")) {
+        return;
+    }
+
     const orangeTitle = document.querySelector(".orange-title");
 
     if (!document.getElementById("advancePickTaskDisplay")) {
@@ -319,7 +414,7 @@ const displayAllPickTaskInfo = () => {
     barContainer.setAttribute("style", "width: 100%; display: flex;");
     advancePickTaskDisplay.appendChild(barContainer);
 
-    const moreAdvancePickTaskDisplay = createElementWithId("table", "moreAdvancePickTaskDisplay");
+    const moreAdvancePickTaskDisplay = createElementWithId("div", "moreAdvancePickTaskDisplay");
     moreAdvancePickTaskDisplay.setAttribute("style", "width: 100%;");
     advancePickTaskDisplay.appendChild(moreAdvancePickTaskDisplay);
 
@@ -334,7 +429,6 @@ const displayAllPickTaskInfo = () => {
         let currentPickTaskType = getPickTaskType(childEle.children[7]);
         let currentPickTaskOrders = parseInt(childEle.children[8].querySelector("div[role=\"progressbar\"]").ariaValueMax);
 
-        //console.log(currentPickTaskUnits + '   ' + currentPickTaskType + '     ' + currentPickTaskOrders);
         if (currentPickTaskAssignee === "") {
             currentPickTaskAssignee = "unassigned";
         };
@@ -343,10 +437,39 @@ const displayAllPickTaskInfo = () => {
             nameToIndex[currentPickTaskAssignee] = currentIndex;
             currentIndex ++;
 
-            countByName.push({name: currentPickTaskAssignee, amountAssigned: 0});
+            countByName.push({
+                name: currentPickTaskAssignee,
+                amountAssigned: 0,
+                SIOC: {
+                    pickTasks: 0,
+                    units: 0,
+                    orders: 0
+                },
+                MULTI: {
+                    pickTasks: 0,
+                    units: 0,
+                    orders: 0
+                },
+                SINGLE: {
+                    pickTasks: 0,
+                    units: 0,
+                    orders: 0
+                },
+                OTHER: {
+                    pickTasks: 0,
+                    units: 0,
+                    orders: 0
+                },
+                themeColor: stringToColour(currentPickTaskAssignee)
+            });
         }
+
+        let currentAssignee = countByName[nameToIndex[currentPickTaskAssignee]];
         
-        countByName[nameToIndex[currentPickTaskAssignee]].amountAssigned ++;
+        currentAssignee.amountAssigned ++;
+        currentAssignee[currentPickTaskType].pickTasks ++;
+        currentAssignee[currentPickTaskType].units += currentPickTaskUnits;
+        currentAssignee[currentPickTaskType].orders += currentPickTaskOrders;
         
 
         totalPickTasks ++;
@@ -359,7 +482,7 @@ const displayAllPickTaskInfo = () => {
         let currentBar = document.createElement("div");
         currentBar.setAttribute("style", 
             "width: "+ (currentAssigneeInfo.amountAssigned / totalPickTasks) * 100 +"%;" + 
-            "border-top: 15px solid "+ stringToColour(currentAssigneeInfo.name) +";" + 
+            "border-top: 15px solid "+ currentAssigneeInfo.themeColor +";" + 
             "border-radius: 5rem;" + 
             "transition-duration: 100ms;" + 
             "cursor: pointer;"  
@@ -376,6 +499,8 @@ const displayAllPickTaskInfo = () => {
             currentBar.style.transform = "scale(1)";
         })
 
+        currentBar.addEventListener("click", () => {displayMoreDetailsOfAssignee(moreAdvancePickTaskDisplay, currentAssigneeInfo)});
+
         barContainer.appendChild(currentBar);
     }   
 
@@ -383,16 +508,6 @@ const displayAllPickTaskInfo = () => {
 
 };
 
-const improveReadyToPickUI = () => {
-    
-    if (document.getElementById("selected_status_for_showing_pick_tasks")) {
-        if (true) {
-            displayAllPickTaskInfo();
-        } else {
-            showTotalAssignedPickTasks();
-        }
-    }
-}
 
 const createElementWithId = (elementType, elementId) => {
     var newElement = document.createElement(elementType);

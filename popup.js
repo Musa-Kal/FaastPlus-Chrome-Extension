@@ -1,3 +1,5 @@
+import {fetchFromChromeStorage} from "./utils.js"
+
 const showEditRecordsUi = () => {
 
     const inputContainer = document.getElementById("editRecords-InputContainer");
@@ -228,17 +230,6 @@ const displayRecentlyPacked = async () => {
 };
 
 
-
-const fetchFromChromeStorage = async (key, defaultResponse=[]) => {
-    return new Promise((resolve) => {
-        chrome.storage.sync.get([key], (obj) => {
-            resolve(obj[key] ? JSON.parse(obj[key]) : defaultResponse);
-        });
-    });
-};
-
-
-
 const clearAllRecordsButton = document.getElementById("clearRecord-btn");
 
 const displayLogsButton = document.getElementById("displayLogsButton");
@@ -250,6 +241,8 @@ const editTypeSelectionButton = document.getElementById("editTypeSelection");
 const adjustmentTypeBtnContainer = document.getElementById("adjustmentTypeBtnContainer");
 
 const amountToEditInput =  document.getElementById("edit-record-number-input");
+
+const extensionOptionsButton = document.getElementById("extenetionOptionsButton");
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -275,6 +268,8 @@ document.addEventListener("DOMContentLoaded", () => {
     adjustmentTypeBtnContainer.querySelector("button[name=SIOC]").addEventListener("click", () => {adjustRecords("SIOC");});
     adjustmentTypeBtnContainer.querySelector("button[name=MULTI]").addEventListener("click", () => {adjustRecords("MULTI");});
     adjustmentTypeBtnContainer.querySelector("button[name=SINGLE]").addEventListener("click", () => {adjustRecords("SINGLE");});
+
+    extensionOptionsButton.addEventListener("click", () => {chrome.runtime.openOptionsPage()});
 
     document.querySelector("footer .gitHub-Style-btn").addEventListener("click", () => {
         chrome.tabs.create({active: true, url: "https:github.com/Musa-Kal"});
