@@ -18,7 +18,7 @@ let cachedSettings = {};
     chrome.tabs.onUpdated.addListener((tabId) => {
 
         chrome.tabs.get(tabId, (tab) => {
-    
+
             const {url} = tab; 
             
             if (url.includes("dropship.amazon.com/web/pack/packBulk/picktask")) {
