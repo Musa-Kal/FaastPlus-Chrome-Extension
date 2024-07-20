@@ -1,0 +1,87 @@
+{
+    "name": "FAAST Plus",
+    "version": "0.1.2",
+    "description": "Improves amazon dropship's UI",
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://dropship.amazon.com/*"
+    ],
+    "background": {
+        "service_worker": "js/service-worker/index.js"
+    },
+    "options_ui": {
+        "page": "html/options/index.html",
+        "open_in_tab": true
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://dropship.amazon.com/web/picktasks/new*"
+            ],
+            "js": [
+                "js/content-scripts/new-order.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://dropship.amazon.com/web/picktasks*"
+            ],
+            "js": [
+                "js/content-scripts/ready-to-pick.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://dropship.amazon.com/web/picktasks/print*"
+            ],
+            "js": [
+                "js/content-scripts/pickTask-print.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://dropship.amazon.com/mobile/pack/printDocumentsForBulk?printServerName=*"
+            ],
+            "js": [
+                "js/content-scripts/quickPack.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://dropship.amazon.com/web/pack/packBulk/picktask*"
+            ],
+            "js": [
+                "js/content-scripts/single-order-scan.js"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "matches": [
+                "https://dropship.amazon.com/*"
+            ],
+            "resources": [
+                "js/utils/utils.js"
+            ]
+        }
+    ],
+    "action": {
+        "default_icon": {
+            "16": "assets/images/faastPlus-icon.png",
+            "24": "assets/images/faastPlus-icon.png",
+            "32": "assets/images/faastPlus-icon.png"
+        },
+        "default_title": "FAAST Plus",
+        "default_popup": "html/popup/index.html"
+    },
+    "icons": {
+        "16": "assets/images/faastPlus-icon.png",
+        "32": "assets/images/faastPlus-icon.png",
+        "48": "assets/images/faastPlus-icon.png",
+        "128": "assets/images/faastPlus-icon.png"
+    },
+    "manifest_version": 3
+}

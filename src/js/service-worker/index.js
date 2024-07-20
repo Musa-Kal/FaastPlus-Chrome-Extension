@@ -7,57 +7,6 @@ const fetchFromChromeStorage = async (key, defaultResponse=[]) => {
 };
 
 
-let cachedSettings = {};
-
-((async () => {
-    cachedSettings.PA_VIEW_ENABLED = await fetchFromChromeStorage("PA_VIEW_ENABLED", false);
-    cachedSettings.IMPROVE_NEW_ORDER_SCAN_UI_ENABLED = await fetchFromChromeStorage("IMPROVE_NEW_ORDER_SCAN_UI_ENABLED", true);
-
-    return cachedSettings;
-}))().then((value) => {
-    chrome.tabs.onUpdated.addListener((tabId) => {
-
-        chrome.tabs.get(tabId, (tab) => {
-
-            const {url} = tab; 
-            
-            if (url.includes("dropship.amazon.com/web/pack/packBulk/picktask")) {
-                chrome.tabs.sendMessage(tabId, {
-                    type: "SINGLE-ORDER-SCAN-PAGE",
-                    improveNewOrderScanUiEnabled: cachedSettings.IMPROVE_NEW_ORDER_SCAN_UI_ENABLED
-                });
-            } else if (url.includes("dropship.amazon.com/web/picktasks/print") && cachedSettings.PA_VIEW_ENABLED) {
-                const urlParams = url.split("/");
-                fetchPickTaskAndSendData(urlParams[6], tabId);
-            } else if (url.includes("dropship.amazon.com/web/picktasks/new") && cachedSettings.PA_VIEW_ENABLED) {
-                chrome.tabs.sendMessage(tabId, {
-                    type: "DISPLAY-PRODUCT-IMAGE",
-                });
-            } else if (url.includes("dropship.amazon.com/web/picktasks")) {
-                if (cachedSettings.PA_VIEW_ENABLED) {
-                    chrome.tabs.sendMessage(tabId, {
-                        type: "SHOW-ADVANCE-PICKTASK-COUNT",
-                    });
-                } else {
-                    chrome.tabs.sendMessage(tabId, {
-                        type: "COUNTPICKTASK",
-                    });
-                }
-            } else if (url.includes("dropship.amazon.com/mobile/pack/printDocumentsForBulk?printServerName=")) {
-                chrome.tabs.sendMessage(tabId, {
-                    type: "DISPLAY-QUICKPACK-PROMPT",
-                });
-            } 
-    
-        });
-        
-    });
-    
-    
-})
-
-
-
 chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
     const {type} = obj;
 
@@ -150,13 +99,7 @@ chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
         .catch((error) => {
             console.log(error);
         })
-    } else if (type === "SETTINGS-CHANGED") {
-
-        const {setting} = obj;
-        cachedSettings[setting.name] = setting.state;
-
     }
-
 
     return true;
     
@@ -164,38 +107,7 @@ chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
 
 
 
-const fetchPickTaskAndSendData = (pickTaskId, tabId) => {
-    fetch("https://dropship.amazon.com/web/ajax/search/getItemsById?id="+pickTaskId)
-        .then((response) => {
-            if  (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        })
-        .then((data) => {
 
-            const pickTaskInfo = data.items.PickTask[0];
-
-            if (!pickTaskInfo) {
-                return Promise.reject(data);
-            }
-
-            const pickTaskQuantity = pickTaskInfo.totalQuantity;
-
-            chrome.tabs.sendMessage(tabId, {
-                type: "DISPLAY-PICK-TASK-QUANTITY",
-                quantity: pickTaskQuantity,
-            });
-            
-
-        })
-        .catch((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-};
 
 
 const editRecords = async (typeOfEdit, typeOfOrderToEdit, amountToEdit) => {

@@ -1,4 +1,4 @@
-import {fetchFromChromeStorage} from "./utils.js"
+import {fetchFromChromeStorage} from "../../utils/utils.js"
 
 const showEditRecordsUi = () => {
 
@@ -78,9 +78,11 @@ const displayLogs = async () => {
 
     logsTable.appendChild(currentRow);
 
+    console.log(previousLogs)
+
     const logs = previousLogs.logs;
 
-    for (let i=logs.length-1; i>=0; i--) {
+    for (let i=Math.max(0, logs.length-1); i>=0; i--) {
         currentRow = document.createElement("tr");
 
         for (let key of keys) {
@@ -199,7 +201,7 @@ const displayLifeTimePacked = async () => {
 };
 
 const displayRecentlyPacked = async () => {
-    const previouslyPacked = await fetchFromChromeStorage("RECENTLY-PACKED");
+    const previouslyPacked = await fetchFromChromeStorage("RECENTLY-PACKED", []);
     const tableElementBody = document.querySelector("#packed-status tbody");
     tableElementBody.innerHTML = ""
 

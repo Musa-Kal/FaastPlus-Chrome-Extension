@@ -1,4 +1,5 @@
-import {fetchFromChromeStorage, stringToHash, PA_VIEW_PASSWORD_HASH} from "./utils.js"
+import {fetchFromChromeStorage, stringToHash} from "../../utils/utils.js"
+import {PA_VIEW_PASSWORD_HASH} from "../../utils/passwordHash.js"
 
 
 const PA_ViewToggle = async () => {
@@ -13,11 +14,9 @@ const PA_ViewToggle = async () => {
             ["PA_VIEW_ENABLED"]: JSON.stringify(toggledPA_ViewState)
         });
 
-        settingsChangeAlert("PA_VIEW_ENABLED", toggledPA_ViewState);
-
         return toggledPA_ViewState;
     } else {
-        window.confirm("Incorrect Password!\nContact The Author For Password If Needed.");
+        alert("Incorrect Password!\nContact The Author For Password If Needed.");
     }
 
     return currentPA_ViewState;
@@ -31,7 +30,7 @@ const allSecureSettings = [ // [Toggle Functions, Chrome Storage Key, Default St
 
 
 const allOpenSettings = [ // [Chrome Storage Key, Default State, Display Name]
-    ["IMPROVE_NEW_ORDER_SCAN_UI_ENABLED", true, "NEW ORDER SCAN SCAN ASSIST:"]
+    ["IMPROVE_NEW_ORDER_SCAN_UI_ENABLED", true, "NEW ORDER SCAN ASSIST:"]
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -62,16 +61,6 @@ const addRowWithSetting = async (parentElement, setting) => {
 }
 
 
-const settingsChangeAlert = (settingName, settingState) => {
-    chrome.runtime.sendMessage( {
-        type: "SETTINGS-CHANGED",
-        setting: {
-            name: settingName,
-            state: settingState
-        }
-    });
-};
-
 
 const toggleSetting = async (settingName) => {
 
@@ -80,8 +69,6 @@ const toggleSetting = async (settingName) => {
     chrome.storage.sync.set({
         [settingName]: JSON.stringify(toggledSettingStateState)
     });
-
-    settingsChangeAlert(settingName, toggledSettingStateState);
 
     return toggledSettingStateState;
 };
@@ -98,7 +85,7 @@ const insertToggleOptionRow = (tableElement, labelName, checkBox, toggleFunction
     const newRow = document.createElement("tr");
 
     let currentCell = document.createElement("td");
-    currentCell.setAttribute("class", "font-l");
+    currentCell.setAttribute("class", "text-l");
     currentCell.innerText = labelName;
     newRow.appendChild(currentCell);
 

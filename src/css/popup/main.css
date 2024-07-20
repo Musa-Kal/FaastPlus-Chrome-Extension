@@ -1,0 +1,151 @@
+header {
+    text-align: center;
+    width: 100%;
+    height: 20px;
+}
+
+header h3 span{
+    color: hsl(33, 100%, 62%);
+}
+
+body {
+    background-color: #202124;
+    color: white;
+}
+
+
+
+.splitter {
+    display: block;
+    width: 100%;
+    opacity: 60%;
+    border-bottom: 2px double white;
+    margin: 10px 0px;
+}
+
+#pickTask-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.control-button {
+    width: 45% !important; 
+    height: 40px;
+    display: flex;
+    user-select: none;
+}
+
+.control-button img {
+    height: 100%;
+    margin: auto;
+}
+
+
+#editRecords-InputTable {
+    margin: 10px auto;
+    width: 100%;
+}
+
+
+
+.error {
+    background-color: rgb(255, 197, 197);
+    color: red;
+    margin: 5px;
+    margin-top: 20px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid red;
+    font-weight: bold;
+}
+
+
+#edit-record-number-input {
+    width: 90%;
+    font-weight: bolder;
+    font-size: x-large;
+}
+
+
+.styled-textInput {
+    background-color: lightgrey;
+    border: 2px solid grey;
+    border-radius: 10px;
+}
+
+.inputRow {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+
+#editTypeSelection {
+    background-color: white;
+    border-radius: 10px;
+    font-size: xx-large;
+    font-weight: bolder;
+    height: 40px;
+    width: 40px;
+}
+
+
+
+#lifetime-packed-display {
+    text-align: center;
+    margin: 10px auto;
+    border-radius: 10px;
+    border: 2px solid lightgray;
+}
+
+.editRecordsType-buttons {
+    width: 32% !important;
+    height: 30px;
+}
+
+
+
+#clearRecord-btn {
+    height: 30px;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+
+.author-tag {
+    font-size: 20px;
+    float: left;
+}
+
+footer button {
+    float: right;
+}
+
+footer {
+    display: flex;
+
+    justify-content: center;
+}
+
+
+
+.settings-cog {
+  width: 20px;
+  transition: 200ms;
+  cursor: pointer;
+}
+
+.settings-cog:hover {
+  rotate: 360deg;
+  filter: brightness(1.25);
+}
+
+#extenetionOptionsButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
