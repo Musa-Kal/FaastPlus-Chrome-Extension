@@ -1,6 +1,6 @@
 {
     "name": "FAAST Plus",
-    "version": "0.1.2",
+    "version": "0.1.21",
     "description": "Improves amazon dropship's UI",
     "permissions": [
         "storage",

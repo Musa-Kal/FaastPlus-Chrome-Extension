@@ -7,7 +7,78 @@
     const settingState = await fetchFromChromeStorage("IMPROVE_NEW_ORDER_SCAN_UI_ENABLED", true);
 
 
-    const orderJsonHiddenInput = document.getElementById("ordersJson")
+
+    /**
+     * Functions displays the number of scannable instances of the product
+     * appearing in first row of #scan-verify-table element.
+     * 
+     */
+    const improveProductScanUI = () => {
+
+        const scanTableElement = document.getElementById("scan-verify-table");
+    
+        if (scanTableElement) {
+            
+            const scanTable = scanTableElement.querySelector("tbody").children;
+            
+            
+            let scannableCount = 0;
+            const topElement_fnsku = scanTable[0].children[2].querySelector(".fnsku-scan").getAttribute("fnsku");
+    
+    
+            for (let element of scanTable) {
+                let fnskuElement = element.children[2].querySelector(".fnsku-scan");
+    
+                if ((fnskuElement.getAttribute("fnsku") === topElement_fnsku) && (!fnskuElement.classList.contains("scan-verified"))) {
+                    scannableCount ++;
+                }
+    
+                element.style.border = "none";
+            }
+    
+            scanTable[0].style.border = "2px solid #5ceaf7";
+    
+            
+            if (!document.getElementById("item-count-display")) {
+                const newElement = createElementWithId("div", "item-count-display");
+                newElement.style.fontSize = "15pt";
+                document.getElementById("scan-item-section").insertBefore(newElement, scanTableElement);
+            }
+    
+            const countDisplay = document.getElementById("item-count-display");
+            countDisplay.innerHTML = "# of " + "<u>HIGHLIGHTED</u>" + " item to be Scanned: " + "<strong>" + scannableCount + "</strong>";
+    
+            
+        } 
+        
+    };
+    
+
+
+    /**
+     * 
+     * Function sends to record adjustment request to service worker and click on the 
+     * (scanAndVerifyButton) html element.
+     * 
+     * @param {string} identifierOfPickTask - SIOC | SINGLE | MULTI 
+     * @param {number} quantityOfUnitsInOrder 
+     * @param {HTMLAllCollection} scanAndVerifyButton 
+     * @param {string} typeOfAdjustment  
+     */
+    const addAndContinue = (identifierOfPickTask, quantityOfUnitsInOrder, scanAndVerifyButton, typeOfAdjustment) => {
+
+        chrome.runtime.sendMessage( {
+            type: typeOfAdjustment,
+            pickTaskIdentifier: identifierOfPickTask,
+            quantity: quantityOfUnitsInOrder,
+        });
+    
+        scanAndVerifyButton.click();
+    }
+
+
+
+    const orderJsonHiddenInput = document.getElementById("ordersJson");
 
     if (orderJsonHiddenInput) {
         const scanAndVerifyBtnParent = orderJsonHiddenInput.parentNode.parentNode;
@@ -58,74 +129,5 @@
 
     }
 
-
-
-    /**
-     * Functions displays the number of scannable instances of the product
-     * appearing in first row of #scan-verify-table element.
-     * 
-     */
-    const improveProductScanUI = () => {
-
-        const scanTableElement = document.getElementById("scan-verify-table");
     
-        if (scanTableElement) {
-            
-            const scanTable = scanTableElement.querySelector("tbody").children;
-            
-            
-            let scannableCount = 0;
-            const topElement_fnsku = scanTable[0].children[2].querySelector(".fnsku-scan").getAttribute("fnsku");
-    
-    
-            for (let element of scanTable) {
-                let fnskuElement = element.children[2].querySelector(".fnsku-scan");
-    
-                if ((fnskuElement.getAttribute("fnsku") === topElement_fnsku) && (!fnskuElement.classList.contains("scan-verified"))) {
-                    scannableCount ++;
-                }
-    
-                element.style.border = "none";
-            }
-    
-            scanTable[0].style.border = "2px solid #5ceaf7";
-    
-            
-            if (!document.getElementById("item-count-display")) {
-                const newElement = createElementWithId("div", "item-count-display");
-                newElement.style.fontSize = "15pt";
-                document.getElementById("scan-item-section").insertBefore(newElement, scanTableElement);
-            }
-    
-            const countDisplay = document.getElementById("item-count-display");
-            countDisplay.innerHTML = "# of " + "<u>HIGHLIGHTED</u>" + " item to be Scanned: " + "<strong>" + scannableCount + "</strong>";
-    
-            
-        } 
-        
-    };
-    
-
-    /**
-     * 
-     * Function sends to record adjustment request to service worker and click on the 
-     * (scanAndVerifyButton) html element.
-     * 
-     * @param {string} identifierOfPickTask - SIOC | SINGLE | MULTI 
-     * @param {number} quantityOfUnitsInOrder 
-     * @param {HTMLAllCollection} scanAndVerifyButton 
-     * @param {string} typeOfAdjustment  
-     */
-    const addAndContinue = (identifierOfPickTask, quantityOfUnitsInOrder, scanAndVerifyButton, typeOfAdjustment) => {
-
-        chrome.runtime.sendMessage( {
-            type: typeOfAdjustment,
-            pickTaskIdentifier: identifierOfPickTask,
-            quantity: quantityOfUnitsInOrder,
-        });
-    
-        scanAndVerifyButton.click();
-    }
-
-
 })();
