@@ -1,16 +1,16 @@
 {
     "name": "FAAST Plus",
-    "version": "0.1.21",
+    "version": "0.1.2",
     "description": "Improves amazon dropship's UI",
     "permissions": [
-        "storage",
-        "tabs"
+        "storage"
     ],
     "host_permissions": [
         "https://dropship.amazon.com/*"
     ],
     "background": {
-        "service_worker": "js/service-worker/index.js"
+        "service_worker": "js/service-worker/index.js",
+        "type": "module"
     },
     "options_ui": {
         "page": "html/options/index.html",

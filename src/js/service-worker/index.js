@@ -1,10 +1,4 @@
-const fetchFromChromeStorage = async (key, defaultResponse=[]) => {
-    return new Promise((resolve) => {
-        chrome.storage.sync.get([key], (obj) => {
-            resolve(obj[key] ? JSON.parse(obj[key]) : defaultResponse);
-        });
-    });
-};
+import {fetchFromChromeStorage} from "../utils/utils.js"
 
 
 chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {

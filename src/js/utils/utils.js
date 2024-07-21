@@ -1,4 +1,4 @@
-/**\
+/**
  * Returns current active tab
  */
 export async function getActiveTabURL() {
