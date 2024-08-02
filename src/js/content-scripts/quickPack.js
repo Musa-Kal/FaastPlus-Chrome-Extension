@@ -40,36 +40,20 @@
             const newElement = createElementWithId("div", "quickPack-type-select");
             newElement.setAttribute("style", "width: 100%; margin: 25px 0; display: flex; justify-content: space-between;");
     
-            const orderColor = {"SIOC": "green", "SINGLE": "blue"}
-            
+            const printLabelButton = document.querySelector("#printShippingLabels .ui-btn-text");
+            const pickTaskQuantity = parseInt(printLabelButton.innerText.split("(")[1]);
+
             for (let type of ["SIOC", "SINGLE"]) {
                 let currentButton = createElementWithId("button", "select-"+type+"continue");
-                currentButton.setAttribute("style", 
-                    "width: 49%;" + 
-                    "height: 35px;" + 
-                    "border-radius: 5px;" +
-                    "background-color: " + orderColor[type] + ";" +
-                    "border: none;" + 
-                    "color: white;" + 
-                    "font-weight: bold;" +
-                    "font-size: large;" + 
-                    "cursor: pointer;"
-                );
-    
-                currentButton.addEventListener("mouseover", () => {
-                    currentButton.style.opacity = "80%";
-                });
-    
-                currentButton.addEventListener("mouseout", () => {
-                    currentButton.style.opacity = "100%";
-                })
+
+                currentButton.setAttribute("class", "yeet-button " + "btn-" + type.toLowerCase() + " py-1" + " text-l");
+                currentButton.style.width = "49%";
     
                 currentButton.innerText = "Add to " + type + " and Continue";
-                const printLabelButton = document.querySelector("#printShippingLabels .ui-btn-text");
     
                 currentButton.addEventListener("click", (event) => {
                     event.target.disabled = true;
-                    addAndContinue(type, parseInt(printLabelButton.innerText.split("(")[1]), scanAndVerifyButton, "QUICKPACK-ADD-UNITS-PACKED");
+                    addAndContinue(type, pickTaskQuantity, scanAndVerifyButton, "QUICKPACK-ADD-UNITS-PACKED");
                 });
     
                 newElement.appendChild(currentButton);

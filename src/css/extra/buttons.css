@@ -54,8 +54,10 @@
     -webkit-filter: brightness(1.1);
 }
 
-.yeet-button:disabled {
+.yeet-button:disabled,
+.yeet-button[disabled] {
     cursor: auto;
+    border: none;
 }
 
 .yeet-button:active {

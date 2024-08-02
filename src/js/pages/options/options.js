@@ -1,6 +1,10 @@
 import {fetchFromChromeStorage, stringToHash} from "../../utils/utils.js"
-import {PA_VIEW_PASSWORD_HASH} from "../../utils/passwordHash.js"
+import {PA_VIEW_PASSWORD_HASH, PAST_PRODUCTIVITY_REPORT_PASSWORD_HASH} from "../../utils/passwordHash.js"
 
+
+const wrongPasswordAlert = () => {
+    alert("Incorrect Password!\nContact The Author For Password If Needed.");
+};
 
 const PA_ViewToggle = async () => {
     const passwordInputted = prompt("Please Input PASSWORD to Toggle PA View:");
@@ -16,7 +20,7 @@ const PA_ViewToggle = async () => {
 
         return toggledPA_ViewState;
     } else {
-        alert("Incorrect Password!\nContact The Author For Password If Needed.");
+        wrongPasswordAlert();
     }
 
     return currentPA_ViewState;
@@ -33,7 +37,7 @@ const allOpenSettings = [ // [Chrome Storage Key, Default State, Display Name]
     ["IMPROVE_NEW_ORDER_SCAN_UI_ENABLED", true, "NEW ORDER SCAN ASSIST:"]
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const optionsConfigurationsTable = document.getElementById("optionsConfigurationsTable");
 
     for (let setting of allSecureSettings) {
@@ -44,7 +48,111 @@ document.addEventListener("DOMContentLoaded", () => {
         addRowWithSetting(optionsConfigurationsTable, setting);
     };
 
+    setUpProductivityReportDateInput();
+
 });
+
+
+// TODO: Finish this \/
+const setUpProductivityReportDateInput = async () => {
+    const fetchingProductivityReportData = await fetchFromChromeStorage("FETCHING-PRODUCTIVITY-REPORT-DATA", false);
+
+    const [todayDate] = new Date().toISOString().split("T");
+    const [year, month, day] = todayDate.split("-");
+    const previousYearsDate = (parseInt(year) - 1) + "-" + month + "-" + day;
+
+    const fetchAfterDateInput = document.getElementById("fetchAfterDateInput");
+    const fetchBeforeDateInput = document.getElementById("fetchBeforeDateInput");
+    
+
+    fetchAfterDateInput.max = todayDate;
+    fetchAfterDateInput.min = previousYearsDate;
+
+    fetchAfterDateInput.addEventListener("change", () => {
+        fetchBeforeDateInput.min = fetchAfterDateInput.value;
+    });
+
+    fetchBeforeDateInput.max = todayDate;
+    fetchBeforeDateInput.min = previousYearsDate;
+
+    fetchBeforeDateInput.addEventListener("change", () => {
+        fetchAfterDateInput.max = fetchBeforeDateInput.value;
+    });
+
+    const cancelPreviousRequestButton = document.getElementById("cancel-previous-request-button");
+
+    const productivityReportGenerateButton = document.getElementById("productivity-report-generate-button");
+    productivityReportGenerateButton.disabled = fetchingProductivityReportData;
+
+    cancelPreviousRequestButton.addEventListener("click", () => {
+
+        chrome.storage.sync.remove(["PAST-ASSIGNED-BY-NAME", "FETCHING-PRODUCTIVITY-REPORT-DATA", "DATE-TO-FETCH-PRODUCTIVITY-REPORT-AFTER", "DATE-TO-FETCH-PRODUCTIVITY-REPORT-BEFORE"], function(){
+            var error = chrome.runtime.lastError;
+            if (error) {
+                console.log(error);
+            }
+        })
+        
+        productivityReportGenerateButton.disabled = false;
+        
+    });
+
+    productivityReportGenerateButton.addEventListener("click", (event) => {
+
+        const passwordInputted = prompt("Please Input PASSWORD to GENERATE Productivity Report:");
+
+        if (stringToHash(passwordInputted) === PAST_PRODUCTIVITY_REPORT_PASSWORD_HASH) {
+
+            event.target.disabled = true;
+
+            const fetchAfterDate = fetchAfterDateInput.value?.replace('-', '/');
+            const fetchBeforeDate = fetchBeforeDateInput.value?.replace('-', '/');
+
+            generateProductivityReport(fetchAfterDate, fetchBeforeDate);
+
+        } else {
+            wrongPasswordAlert();
+        }
+        
+    })
+};
+
+
+const generateProductivityReport = (fetchAfterDate, fetchBeforeDate) => {
+    const [todayDate] = new Date().toISOString().split("T");
+    const [year, month, day] = todayDate.split("-");
+
+    const todayDateTime = new Date(year + "/" + month + "/" + day).getTime();
+    const previousYearsDateTime = new Date((parseInt(year) - 1) + "/" + month + "/" + day).getTime();
+
+    const fetchAfterTime = new Date(fetchAfterDate).getTime();
+    const fetchBeforeTime = new Date(fetchBeforeDate).getTime();
+
+    if ( fetchAfterTime && fetchBeforeTime &&
+        fetchAfterTime <= fetchBeforeTime && 
+        previousYearsDateTime <= fetchAfterTime &&
+        fetchAfterTime <= todayDateTime &&
+        previousYearsDateTime <= fetchBeforeTime &&
+        fetchBeforeTime <= todayDateTime
+    ) {
+
+        chrome.storage.sync.set({
+            ["PAST-ASSIGNED-BY-NAME"]: JSON.stringify({}),
+            ["FETCHING-PRODUCTIVITY-REPORT-DATA"]: JSON.stringify(true),
+            ["DATE-TO-FETCH-PRODUCTIVITY-REPORT-AFTER"]: JSON.stringify(fetchAfterDate),
+            ["DATE-TO-FETCH-PRODUCTIVITY-REPORT-BEFORE"]: JSON.stringify(fetchBeforeDate)
+        }).then(() => {
+
+            chrome.tabs.create({active: true, url: "https://dropship.amazon.com/web/picktasks?selectedStatus=ALL&selectedTimeFrame=ALL&pageSize=1000"});
+
+        });
+
+    } else {
+        alert("INVALID DATE SELECTION !!!")
+    }
+
+
+};
 
 
 const addRowWithSecureSetting = async (parentElement, setting) => {

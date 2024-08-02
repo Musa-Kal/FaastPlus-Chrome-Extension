@@ -18,6 +18,40 @@
 
     <main class="my-3">
       <table id="optionsConfigurationsTable"></table>
+
+      <div id="otherOptions" class="my-3 text-center">
+        <h1>More Options</h1>
+        <div class="settingsRow py-2">
+          <h2 class="my-0 mb-2">Generate Productivity Report</h2>
+
+          <div class="w-100 add-flex space-between">
+
+            <div class="w-50 text-l">
+              <label for="fetchAfterDateInput">On and After:</label>
+              <input id="fetchAfterDateInput" type="date" class="w-50 text-center text-l">
+            </div>
+
+            <div class="w-50 text-l">
+              <label for="fetchBeforeDateInput">On and Before:</label>
+              <input id="fetchBeforeDateInput" type="date" class="w-50 text-center text-l">  
+            </div>
+
+          </div>
+
+          <div class="w-100 mt-2 add-flex space-between">
+
+            <div class="w-50 text-l text-center">
+              <button id="cancel-previous-request-button" class="yeet-button btn-danger w-75">CANCEL PREVIOUS REQUEST</button>
+            </div>
+
+            <div class="w-50 text-l">
+              <button id="productivity-report-generate-button" class="yeet-button w-75">GENERATE</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
     </main>
     
     <footer>

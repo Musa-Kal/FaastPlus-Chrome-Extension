@@ -47,6 +47,25 @@ export function stringToHash(str) {
 };
 
 
+/**
+ * 
+ * Functions compares date provided as string and returns true is first parameter is smaller 
+ * then the second otherwise returns false.
+ * 
+ * (string date should be formatted as "yyyy/mm/dd")
+ * 
+ * 
+ * @param {string} stringDate1 -> "yyyy/mm/dd"
+ * @param {string} stringDate2 -> "yyyy/mm/dd"
+ * @returns 
+ */
+export function dateIsLessThen(stringDate1, stringDate2) {
+    let date1 = new Date(stringDate1).getTime();
+    let date2 = new Date(stringDate2).getTime();
+
+    return (date1 < date2);
+}
+
 
 /**
  * 

@@ -1,0 +1,26 @@
+.line-behind {
+    position: relative;
+    z-index: 1;
+    
+    &:before {
+        border-top: 2px solid #dfdfdf;
+        content:"";
+        margin: 0 auto;
+        position: absolute;
+        top: 50%; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        z-index: -1;
+    }
+
+    span { 
+        border: 2px solid #dfdfdf;
+        background: #fcfcfc; 
+        border-radius: 15rem;
+        padding: 0 15px; 
+    }
+}
+
+.mainBarsDetailContainer {
+    border-left: 2px solid #dfdfdf;
+    border-right: 2px solid #dfdfdf;
+}

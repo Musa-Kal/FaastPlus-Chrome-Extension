@@ -85,14 +85,9 @@
 
         if (!document.getElementById("addPickTaskAndContinue-btn")) {
             let newBtn = createElementWithId("button", "addPickTaskAndContinue-btn");
-            newBtn.setAttribute("class", "btn");
-            newBtn.setAttribute("style",
-                "height: 35px;" +
-                "margin-top: 30px;" +
-                "background-color: " + "#ccf797" + ";" +
-                "font-weight: bold;" +
-                "font-size: large;"
-            );
+            newBtn.setAttribute("class", "yeet-button " + "btn-sioc" + " py-1" + " text-l" + " my-3");
+            newBtn.style.width = "50%";
+
             newBtn.innerText = "Add Pick Task to Total and Continue";
 
             const scanAndVerifyButton = scanAndVerifyBtnParent.querySelector(".continue-to-scan-verify");

@@ -38,26 +38,88 @@
                 .then((data) => {
     
                     if (data.product) {
-    
+
+                        const product = data.product;
+                        
                         if (!document.getElementById("selected-img-display")) {
-                            const newElement = createElementWithId("figure", "selected-img-display");
-                            newElement.setAttribute("style", "width: 75%; margin: 0 auto;")
+                            const newElement = createElementWithId("div", "selected-img-display");
+                            newElement.setAttribute("style", "width: 100%; margin: 0 auto;")
                             batchInfoContainer.appendChild(newElement);
                         }
-    
+
                         const imgDisplayElement = document.getElementById("selected-img-display");
                         imgDisplayElement.innerHTML = "";
-    
+
+                        const weightClassToColor = {
+                            "LIGHT": "bc-success",
+                            "MEDIUM": "bc-warning",
+                            "HEAVY": "bc-danger",
+                            "N/A": "bc-secondary"
+                        };
+
+                        const sizeClassToColor = {
+                            "SMALL": "bc-success",
+                            "MEDIUM": "bc-warning",
+                            "LARGE": "bc-danger",
+                            "X-LARGE": "bc-danger",
+                            "N/A": "bc-secondary"
+                        };
+
+                        const productWeightClass = getWeightClass(product.weightWithUnit.weight);
+                        const productSizeClass = getSizeClass(product.widthWithUnit.length, product.heightWithUnit.length, product.lengthWithUnit.length);
+
+                        const productDetails = [
+                            ["Weight:", product.weightWithUnit.weight.toFixed(1) + " " + product.weightWithUnit.unitOfMeasure, weightClassToColor[productWeightClass] + " color-light"],
+                            ["Size Class:", productSizeClass, sizeClassToColor[productSizeClass]  + " color-light"],
+                            ["Title:", product.title, "color-dark"]
+                        ];
+
+                        const tableElement = document.createElement("table");
+                        tableElement.setAttribute("class", "product-display-table text-xs");
+
+                        let currentRow = document.createElement("tr");
+                        let currentCell = document.createElement("th");
+                        currentCell.setAttribute("class", "text-center");
+                        currentCell.innerText = "- SELECTED PRODUCT -";
+                        currentRow.appendChild(currentCell);
+                        tableElement.appendChild(currentRow);
+
+                        currentRow = document.createElement("tr");
+                        currentCell = document.createElement("td");
+
                         const productImageElement = document.createElement("img");
-                        productImageElement.src = data.product.imageURL;
+                        productImageElement.src = product.imageURL;
                         productImageElement.alt = "Product Image";
-                        productImageElement.setAttribute("style", "width: 100%;");
-                        imgDisplayElement.appendChild(productImageElement);
-    
-                        const productImageCaptionElement = document.createElement("figcaption");
-                        productImageCaptionElement.innerHTML = "<strong>Selected Product: </strong><br>" + data.product.title;
-                        productImageCaptionElement.setAttribute("style", "text-align: center;");
-                        imgDisplayElement.appendChild(productImageCaptionElement);
+                        productImageElement.setAttribute("class", "w-75");
+                        currentCell.appendChild(productImageElement);
+
+                        currentRow.appendChild(currentCell);
+                        tableElement.appendChild(currentRow);
+
+
+
+                        for (let [title, info, classNames] of productDetails) {
+                            currentRow = document.createElement("tr");
+
+                            currentCell = document.createElement("th");
+                            currentCell.setAttribute("class", "text-center");
+                            currentCell.innerText = title;
+                            currentRow.appendChild(currentCell);
+
+                            tableElement.appendChild(currentRow);
+
+                            currentRow = document.createElement("tr");
+
+                            currentCell = document.createElement("td");
+                            currentCell.innerText = info;
+                            currentCell.setAttribute("class", classNames + " text-center font-b");
+                            currentRow.appendChild(currentCell);
+
+
+                            tableElement.appendChild(currentRow);
+                        };
+
+                        imgDisplayElement.appendChild(tableElement);
     
                     }
                 })
@@ -77,4 +139,59 @@
         
        }
     }) 
+
+
+
+
+
+    /**
+     * Function returns weight class as string for given number.
+     * 
+     * @param {number} weight 
+     * @returns 
+     */
+    const getWeightClass = (weight) => {
+
+        if (!weight) {
+            return "N/A";
+        }
+
+        if (15 <= weight) {
+            return "HEAVY";
+        } else if (weight <= 6) {
+            return "LIGHT";
+        }
+        return  "MEDIUM";
+    }
+
+
+    /**
+     * Function returns a string representing size class of a product. Weight class is
+     * based on the volume of the product which requires length, wight and height of the product.
+     * 
+     * @param {number} length 
+     * @param {number} width 
+     * @param {number} height 
+     * @returns 
+     */
+    const getSizeClass = (length, width, height) => {
+
+        if (!(length && width && height)) {
+            return "N/A";
+        }
+
+        const volume = length * width * height;
+
+        if (volume >= 3100) {
+            return "X-LARGE";
+        } else if (volume >= 2500) {
+            return "LARGE";
+        } else if (volume >= 1500) {
+            return "MEDIUM";
+        } 
+        
+        return  "SMALL";
+    }
+
+
 })();
