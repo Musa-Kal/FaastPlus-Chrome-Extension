@@ -55,10 +55,10 @@ chrome.runtime.onMessage.addListener((obj, sender, sendResponse) => {
             for (let attribute of pickTaskInfo.attributes) {
                 let {attributeValue, attributeName} = attribute;
 
-                if (attributeName === "sioc" && attributeValue) {
+                if (attributeName === "sioc" && attributeValue === "true") {
                     pickTaskType = "SIOC";
                     break;
-                } else if (attributeName === "single" && attributeValue) {
+                } else if (attributeName === "single" && attributeValue === "true") {
                     pickTaskType = "SINGLE";
                 }
             }

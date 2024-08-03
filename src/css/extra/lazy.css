@@ -337,3 +337,11 @@
 .font-b {
     font-weight: bold !important;
 }
+
+.text-r {
+    text-align: right;
+}
+
+.font-calibri {
+    font-family: calibri;
+}

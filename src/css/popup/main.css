@@ -4,7 +4,7 @@ header {
     height: 20px;
 }
 
-header h3 span{
+header h3 span {
     color: hsl(33, 100%, 62%);
 }
 
@@ -30,7 +30,7 @@ body {
 }
 
 .control-button {
-    width: 45% !important; 
+    width: 45% !important;
     height: 40px;
     display: flex;
     user-select: none;
@@ -133,19 +133,19 @@ footer {
 
 
 .settings-cog {
-  width: 20px;
-  transition: 200ms;
-  cursor: pointer;
+    width: 20px;
+    transition: 200ms;
+    cursor: pointer;
 }
 
 .settings-cog:hover {
-  rotate: 360deg;
-  filter: brightness(1.25);
+    transform: rotate(360deg);
+    filter: brightness(1.25);
 }
 
 #extenetionOptionsButton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
 }

@@ -22,32 +22,60 @@
             const scanTable = scanTableElement.querySelector("tbody").children;
             
             
-            let scannableCount = 0;
+            let highlightedProductsToScan = 0;
             const topElement_fnsku = scanTable[0].children[2].querySelector(".fnsku-scan").getAttribute("fnsku");
     
     
             for (let element of scanTable) {
                 let fnskuElement = element.children[2].querySelector(".fnsku-scan");
-    
+                
                 if ((fnskuElement.getAttribute("fnsku") === topElement_fnsku) && (!fnskuElement.classList.contains("scan-verified"))) {
-                    scannableCount ++;
+                    highlightedProductsToScan ++;
                 }
     
                 element.style.border = "none";
             }
-    
+            
             scanTable[0].style.border = "2px solid #5ceaf7";
     
             
-            if (!document.getElementById("item-count-display")) {
-                const newElement = createElementWithId("div", "item-count-display");
-                newElement.style.fontSize = "15pt";
-                document.getElementById("scan-item-section").insertBefore(newElement, scanTableElement);
+            if (!document.getElementById("scannable-item-count-display-table")) {
+
+                const newTable = createElementWithId("table", "scannable-item-count-display-table");
+                newTable.setAttribute("class", "stripedTable font-b text-l my-1");
+
+                const itemDisplayTableInfo = [//[ Cell 1 id, Cell 2 text ]
+                    ["total-item-count-display", "# of Units in Order"],
+                    ["scannable-item-count-display", "# of Unscanned Instances of Highlighted Unit"]
+                ];
+
+                for (let [cell1Id, cell2Text] of itemDisplayTableInfo) {
+
+                    let currentRow = document.createElement("tr");
+
+                    let currentCell = createElementWithId("td", cell1Id);
+                    currentCell.setAttribute("class", "px-1 font-calibri")
+                    currentRow.appendChild(currentCell);
+
+                    currentCell = document.createElement("th");
+                    currentCell.setAttribute("class", "px-1 w-75")
+                    currentCell.innerText = cell2Text;
+                    currentRow.appendChild(currentCell);
+
+
+                    newTable.append(currentRow);
+
+                }
+
+                document.getElementById("scan-item-section").insertBefore(newTable, scanTableElement);
+                
             }
-    
-            const countDisplay = document.getElementById("item-count-display");
-            countDisplay.innerHTML = "# of " + "<u>HIGHLIGHTED</u>" + " item to be Scanned: " + "<strong>" + scannableCount + "</strong>";
-    
+
+            const totalItemCountDisplay = document.getElementById("total-item-count-display");
+            totalItemCountDisplay.innerText = scanTable.length;
+
+            const scanAbleItemCountDisplay = document.getElementById("scannable-item-count-display");
+            scanAbleItemCountDisplay.innerText = highlightedProductsToScan;   
             
         } 
         
@@ -81,6 +109,7 @@
     const orderJsonHiddenInput = document.getElementById("ordersJson");
 
     if (orderJsonHiddenInput) {
+
         const scanAndVerifyBtnParent = orderJsonHiddenInput.parentNode.parentNode;
 
         if (!document.getElementById("addPickTaskAndContinue-btn")) {
@@ -101,6 +130,7 @@
             scanAndVerifyBtnParent.parentNode.appendChild(newBtn);
 
         }
+        
     } else if (settingState) {
 
         const targetNode = document.querySelector(".content-container.container");
