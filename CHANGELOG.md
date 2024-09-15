@@ -1,9 +1,5 @@
 # Changelog
 
-## v0.1.34
-
-### Added or Changed
-- Bugfix & Optimization
 
 ## v0.1.33
 
