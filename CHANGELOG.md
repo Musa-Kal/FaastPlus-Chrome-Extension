@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.35
+
+### Added or Changed
+- Bugfix & Optimization
+- Hourly View Beta added
+- Raw Data Extract Added
+- Fix for new Ready to Pick table formate.
 
 ## v0.1.34
 
