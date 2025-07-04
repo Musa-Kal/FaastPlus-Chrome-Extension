@@ -5,6 +5,7 @@
 ### Added or Changed
 - Added the time field in the extracted raw data.
 - Now report generation only required password once.
+- updated README.md
 
 ## v0.1.35
 

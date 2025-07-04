@@ -177,7 +177,7 @@ This extension has 3 main components to it, Popup, Options Window and Content Sc
     - Options window allows users to toggle settings based on user preferences.
 
     - More options section in options window allows for more custom interactions with faast wms site.
-      1. Generate Productivity Report: scrapes the ready to pick section based on range of 2 dates provided by the user and generates a excel sheet based on all the pick-tasks found with in that range. 
+      1. Generate Ready To Pick Report: scrapes the ready to pick section based on range of 2 dates provided and generates a excel sheet based on all the pick-tasks found with in that range (report type can be changed using the right most drop down under Generate "Ready To Pick Report" option). 
 
 
   </details>
