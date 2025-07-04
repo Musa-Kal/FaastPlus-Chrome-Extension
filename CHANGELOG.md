@@ -1,23 +1,33 @@
 # Changelog
 
+## v0.1.36
+
+### Added or Changed
+- Added the time field in the extracted raw data.
+- Now report generation only required password once.
+
+## v0.1.35
+
+### Added or Changed
+- Added for extract raw data from ready to pick extract.
 
 ## v0.1.34
 
 ### Added or Changed
-- Bugfix & Optimization
+- Bugfix & Optimization.
 
 ## v0.1.33
 
 ### Added or Changed
-- Bugfix & Optimization
+- Bugfix & Optimization.
 - Now works with the new vendor flex domain (Most features are still compatible with old domain).
 
 ## v0.1.32
 
 ### Added or Changed
-- Bugfix & Optimization
-- Added Change Logs
-- Added License
+- Bugfix & Optimization.
+- Added Change Logs.
+- Added License.
 - Updated README.md
 
 
