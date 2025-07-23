@@ -3,7 +3,7 @@
 ## v0.1.37
 
 ### Added or Changed
-- Added the ExSD Dropdowns for new orders.
+- Added the ExSD time dropdowns for new orders.
 - Bugfix & Optimization.
 - updated README.md
 

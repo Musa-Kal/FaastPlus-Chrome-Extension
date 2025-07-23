@@ -199,6 +199,16 @@ This extension has 3 main components to it, Popup, Options Window and Content Sc
           
           - This feature is only available in P.A view.
           - When an ASIN is selected in the new order section; image, weight, size classification and name of the product will be shown below the batch size input field. 
+
+          <br>
+          <div align="center">
+            <img src="images/PA-View-NewOrder-ExSD-Time-Dropdown.png" alt="faast-plus-new-order-exsd-time-dropdown-screenshot" width="200px">
+            <p>Image of New Order section ExSD time dropdown Fast Plus [P.A View].</p>
+          </div>
+          
+          - This feature is only available in P.A view.
+          - This feature can be toggled in options page.
+          - This feature allows you to save and select time presets for ExSD in New Order section.
         </details>
 
     2. <details>
