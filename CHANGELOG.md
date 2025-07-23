@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.37
+
+### Added or Changed
+- Added the ExSD Dropdowns for new orders.
+- Bugfix & Optimization.
+- updated README.md
+
 ## v0.1.36
 
 ### Added or Changed
