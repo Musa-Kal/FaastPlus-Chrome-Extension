@@ -5,19 +5,19 @@
 ### Added or Changed
 - Added the ExSD time dropdowns for new orders.
 - Bugfix & Optimization.
-- updated README.md
+- updated README.md.
 
 ## v0.1.36
 
 ### Added or Changed
 - Added the time field in the extracted raw data.
-- Now report generation only required password once.
-- updated README.md
+- Now report generation only requires password once.
+- updated README.md.
 
 ## v0.1.35
 
 ### Added or Changed
-- Added for extract raw data from ready to pick extract.
+- Added option to extract raw data from ready to pick.
 
 ## v0.1.34
 
@@ -36,7 +36,7 @@
 - Bugfix & Optimization.
 - Added Change Logs.
 - Added License.
-- Updated README.md
+- Updated README.md.
 
 
 ### --- ANY CHANGES BEFORE VERSION 0.1.32 HAVE NOT BEEN LOGGED ---
