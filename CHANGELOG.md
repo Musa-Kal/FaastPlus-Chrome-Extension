@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.38
+
+### Added or Changed
+- Bugfix & Optimization.
+
 ## v0.1.37
 
 ### Added or Changed
