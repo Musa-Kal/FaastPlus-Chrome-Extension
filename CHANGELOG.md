@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.39
+
+### Added or Changed
+- Added option to generate Daily Productivity Report in options page.
+- Bugfix & Optimization.
+
 ## v0.1.38
 
 ### Added or Changed
