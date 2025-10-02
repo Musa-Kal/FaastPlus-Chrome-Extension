@@ -178,8 +178,8 @@ This extension has 3 main components to it, Popup, Options Window and Content Sc
 
     - More options section in options window allows for more custom interactions with faast wms site.
       1. Generate Ready To Pick Report: scrapes the ready to pick section based on range of 2 dates provided and generates a csv or view based on all the pick-tasks found with in that range (report type can be changed using the right most drop down under Generate "Ready To Pick Report" option). 
-          - Past Productivity Report: Generates an csv containing all pick task within the date range  separated by assignee.
-          - Daily Productivity Report: Generates a view for a given day under more options showing all the pick task and how long they were active for.
+          - Past Productivity Report: Generates an csv containing all pick task within the date range separated by assignee.
+          - Daily Productivity Report: Downloads a csv file formate similar to raw data report but includes column for last update time and generates a view for a given day under more options showing all the pick task and how long they were active for.
           - Raw Data: Generates a csv containing all useful data with in the date range in ready to pick section.
 
   </details>
