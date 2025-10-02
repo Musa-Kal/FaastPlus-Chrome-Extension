@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.40
+
+### Added or Changed
+- Daily productivity report now downloads an csv too.
+- Bugfix & Optimization.
+
 ## v0.1.39
 
 ### Added or Changed
