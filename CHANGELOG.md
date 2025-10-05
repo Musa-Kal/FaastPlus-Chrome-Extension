@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.41
+
+### Added or Changed
+- Daily productivity view now has filters.
+- U.I improvements. 
+- Bugfix & Optimization.
+
 ## v0.1.40
 
 ### Added or Changed
