@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.42 \[pending\]
+
+### Added or Changed
+- license keys added:
+  - Now users will require license keys to access some features [click here](https://github.com/Musa-Kal/FaastPlus-Chrome-Extension/blob/main/README.md)
+- U.I improvements. 
+- Bugfix & Optimization.
+
 ## v0.1.41
 
 ### Added or Changed
