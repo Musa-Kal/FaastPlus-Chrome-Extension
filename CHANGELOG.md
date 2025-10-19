@@ -4,7 +4,7 @@
 
 ### Added or Changed
 - license keys added:
-  - Now users will require license keys to access some features [click here](https://github.com/Musa-Kal/FaastPlus-Chrome-Extension/blob/main/README.md)
+  - Now users will require license keys to access some features [click here](https://github.com/Musa-Kal/FaastPlus-Chrome-Extension?tab=readme-ov-file#claim-license-key)
 - U.I improvements. 
 - Bugfix & Optimization.
 
