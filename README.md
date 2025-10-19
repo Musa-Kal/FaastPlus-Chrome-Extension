@@ -55,7 +55,7 @@
   <li>
     <a href="#usage">Usage</a>
     <ul>
-      <li><a href="#claim-license-key">claim / obtain license key</a></li>
+      <li><a href="#claim-license-key">Claim / Obtain License Key</a></li>
     </ul>
   </li>
   <li><a href="#roadmap">Roadmap</a></li>
