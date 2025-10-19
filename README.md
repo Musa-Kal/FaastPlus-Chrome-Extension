@@ -327,7 +327,7 @@ Each license key has a role assigned to it, higher the role number more access t
 
 <b>How to claim an license key:</b>
 <br>
-Options Page > Claim License > Insert Key > Press Claim License
+Options Page > Claim License Section > Insert Key > Press Claim License
 
 <div align="center">
   <img src="images/license-section.png" alt="faast-plus-license-section-screenshot" width="50%">
