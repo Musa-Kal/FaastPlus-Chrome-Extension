@@ -36,30 +36,35 @@
 
 
 <!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#chrome-web-store">Chrome Web Store</a></li>
-        <li><a href="#unpacked-installation">Unpacked Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Top contributors</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+<!-- <details> -->
+<h2>Table of Contents</h2>
+<ol>
+  <li>
+    <a href="#about-the-project">About The Project</a>
+    <ul>
+      <li><a href="#built-with">Built With</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="#getting-started">Getting Started</a>
+    <ul>
+      <li><a href="#chrome-web-store">Chrome Web Store</a></li>
+      <li><a href="#unpacked-installation">Unpacked Installation</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="#usage">Usage</a>
+    <ul>
+      <li><a href="#claim-license-key">claim / obtain license key</a></li>
+    </ul>
+  </li>
+  <li><a href="#roadmap">Roadmap</a></li>
+  <li><a href="#contributing">Top contributors</a></li>
+  <li><a href="#license">License</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li><a href="#acknowledgments">Acknowledgments</a></li>
+</ol>
+<!-- </details> -->
 
 
 
@@ -293,7 +298,39 @@ This extension has 3 main components to it, Popup, Options Window and Content Sc
   </details>
 
 
+### Claim License Key
 
+
+<b>Why License Keys:</b>
+<br>
+Reason I went with license keys is so I can give role based access to users, and I implemented license keys in particular because I wanted minimum possible effort on users end and I didn't want users to give their credentials to create an account.
+
+<b>How to obtain a key:</b>
+<br>
+The only way to obtain a key currently is to <a href="#contact">contact</a> the developer.
+
+<b>What does role mean:</b>
+<br>
+Each license key has a role assigned to it, higher the role number more access the user will have. Default role without license is 0 and some features will be locked based on your role number.
+
+<b>How to claim an license key:</b>
+<br>
+Options Page > Claim License > Insert Key > Press Claim License
+
+<div align="center">
+  <img src="images/license-section.png" alt="faast-plus-license-section-screenshot" width="50%">
+  <p>Claim license section in Options page.</p>
+</div>
+
+<div align="center">
+  <img src="images/licesnse-section-once-key-claimed.png" alt="faast-plus-license-section-screenshot" width="50%">
+  <p>Claim license section once a license is claimed.</p>
+</div>
+
+<ul>
+  <li><b>Delete License Button:</b> pressing it will remove the license.</li>
+  <li><b>SYNC License button:</b> pressing it will sync the license with the server.</li>
+</ul>
 
 <br>
 
@@ -334,9 +371,11 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Musa Kaleem - musakaleem1411+github@gmail.com
+Email - musakaleem1411+github@gmail.com
 
-Project Link: [https://github.com/Musa-Kal/FaastPlus-Chrome-Extension](https://github.com/Musa-Kal/FaastPlus-Chrome-Extension)
+LinkedIn - [https://linkedin.com/in/musa-kaleem-122249294](https://linkedin.com/in/musa-kaleem-122249294)
+
+Project Link - [https://github.com/Musa-Kal/FaastPlus-Chrome-Extension](https://github.com/Musa-Kal/FaastPlus-Chrome-Extension)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
