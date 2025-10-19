@@ -182,8 +182,10 @@ This extension has 3 main components to it, Popup, Options Window and Content Sc
     - Options window allows users to toggle settings based on user preferences.
 
     - More options section in options window allows for more custom interactions with faast wms site.
-      1. Generate Productivity Report: scrapes the ready to pick section based on range of 2 dates provided by the user and generates a excel sheet based on all the pick-tasks found with in that range. 
-
+      1. Generate Ready To Pick Report: scrapes the ready to pick section based on range of 2 dates provided and generates a csv or view based on all the pick-tasks found with in that range (report type can be changed using the right most drop down under Generate "Ready To Pick Report" option). 
+          - Past Productivity Report: Generates an csv containing all pick task within the date range separated by assignee.
+          - Daily Productivity Report: Downloads a csv file formate similar to raw data report but includes column for last update time and generates a view for a given day under more options showing all the pick task and how long they were active for.
+          - Raw Data: Generates a csv containing all useful data with in the date range in ready to pick section.
 
   </details>
 
@@ -204,6 +206,16 @@ This extension has 3 main components to it, Popup, Options Window and Content Sc
           
           - This feature is only available in P.A view.
           - When an ASIN is selected in the new order section; image, weight, size classification and name of the product will be shown below the batch size input field. 
+
+          <br>
+          <div align="center">
+            <img src="images/PA-View-NewOrder-ExSD-Time-Dropdown.png" alt="faast-plus-new-order-exsd-time-dropdown-screenshot" width="200px">
+            <p>Image of New Order section ExSD time dropdown Fast Plus [P.A View].</p>
+          </div>
+          
+          - This feature is only available in P.A view.
+          - This feature can be toggled in options page.
+          - This feature allows you to save and select time presets for ExSD in New Order section.
         </details>
 
     2. <details>
